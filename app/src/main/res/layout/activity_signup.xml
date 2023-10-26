@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    tools:context=".Activity.SignUpActivity"
+    >
+
+    <RelativeLayout
+        android:id="@+id/signup_panel_middle1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/signup_panel_middle2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+            <ImageView
+                android:id="@+id/signup_imageView2"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:srcCompat="@drawable/delta_logo2" />
+
+            <TextView
+                android:id="@+id/signup_textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/signup_textView1"
+                android:layout_alignLeft="@+id/signup_textView1"
+                android:layout_marginLeft="11dp"
+                android:layout_marginTop="1dp"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="0dp"
+                android:text="with Delta Account"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/signup_textView1"
+                android:layout_width="126dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@+id/signup_imageView2"
+                android:fontFamily="@font/poppins_bold"
+                android:padding="0dp"
+                android:text="Sign Up"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="28sp" />
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/signup_textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signup_panel_middle2"
+            android:layout_alignLeft="@+id/txtUsernameSignUp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Username"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/txtUsernameSignUp"
+            style="@style/InputText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signup_textView3"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:inputType="text"
+            android:hint="Username"
+            android:textColorHint="@color/txtColor3"/>
+
+        <TextView
+            android:id="@+id/signup_textView5"
+            android:layout_alignLeft="@+id/txtPasswordSignUp"
+            android:layout_below="@+id/txtUsernameSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Password"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/txtPasswordSignUp"
+            style="@style/InputText"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/signup_textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5px"
+            android:hint="•••••••••••"
+            android:inputType="textPassword"
+            android:textColorHint="@color/txtColor3"
+            app:endIconMode="password_toggle"
+            />
+
+        <TextView
+            android:id="@+id/signup_textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtPasswordSignUp"
+            android:layout_alignLeft="@+id/txtUsernameSignUp"
+            android:layout_marginTop="15dp"
+            android:fontFamily="@font/poppins_regular"
+            android:text="Domain"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/txtDomainSigUp"
+            style="@style/InputText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/signup_textView4"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:inputType="text"
+            android:text="delta.corp" />
+
+        <Button
+            android:id="@+id/btnSignup"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60px"
+            android:layout_marginBottom="200px"
+            android:layout_below="@+id/txtDomainSigUp"
+            android:layout_width="280px"
+            android:layout_height="100px"
+            android:background="@drawable/rounded_button"
+            android:fontFamily="@font/poppins_bold"
+            android:paddingTop="10px"
+            android:text="Sign up"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBarSignUp"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="8dp"
+            android:layout_alignTop="@+id/btnSignup"
+            android:layout_toEndOf="@+id/btnSignup"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/signup_view2"
+        android:layout_width="wrap_content"
+        android:layout_height="800px"
+        android:background="@drawable/login_wave_background"
+        android:scaleX="1.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/signup_imageView"
+        android:layout_width="111dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/delta_logo"
+        app:layout_constraintBottom_toBottomOf="@+id/signup_view2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/signup_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="19dp"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/poppins_regular"
+        android:textSize="12sp"
+        android:textColor="@color/txtColor2"
+        android:text="Delta Electronic Thailand | Copyright ©2022."
+        app:layout_constraintBottom_toBottomOf="@+id/signup_view2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+    <Button
+        android:id="@+id/btnBackToLogin"
+        android:layout_width="150px"
+        android:layout_height="80px"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/rounded_button"
+        android:fontFamily="@font/poppins_regular"
+        android:paddingTop="10px"
+        android:text="login"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+
+        android:id="@+id/txtResponseSignUp"
+        style="@style/MessageBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Response message"
+        android:textColor="@color/white"
+        android:visibility="invisible"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/signup_imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="InputText">
+        <item name="android:background">@drawable/rounded_edittext</item>
+
+        <item name="android:ems">15</item>
+        <item name="android:radius">8dp</item>
+        <item name="android:padding">20px</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/txtColor1</item>
+    </style>
+
+    <style name="MessageBox">
+        <item name="android:background">@drawable/message_box</item>
+        <item name="android:padding">20px</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/txtColor1</item>
+    </style>
+
+    <style name="CustomTabLayoutStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">@color/txtColor2</item>
+        <item name="fontFamily">@font/poppins_regular</item>
+<!--        <item name="tabSelectedTextColor">@color/white</item>-->
+        <item name="tabIndicator">@drawable/jobstab_indicator</item>
+    </style>
+    <style name="CustomBottomNavigationTitleStyle">
+        <item name="android:fontFamily">@font/poppins_medium</item>
+    </style>
+    <style name="CustomSwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/btnSummit</item>
+        <item name="colorSwitchThumbNormal">#FFFFFF</item>
+        <item name="android:foreground">#00FFFFFF</item>
+<!--        <item name="android:colorForeground">#00FFFFFF</item>-->
+    </style>
+</resources>

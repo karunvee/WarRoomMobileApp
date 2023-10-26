@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bodyColor1">#FFFFFFFF</color>
+    <color name="bodyColor2">#ECF4FF</color>
+    <color name="bodyColor3">#0573FE</color>
+    <color name="bodyColor4">#DEDEDE</color>
+
+    <color name="boxColor1">#FFE1B4</color>
+    <color name="boxColor2">#C1DEFF</color>
+    <color name="boxColor3">#8DB0D6</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FE6161</color>
+    <color name="green">#55b570</color>
+
+    <color name="txtColor0">#1258b0</color>
+    <color name="txtColor1">#5E5E5E</color>
+    <color name="txtColor2">#868686</color>
+    <color name="txtColor3">#AEAEAE</color>
+    <color name="txtColor4">#c4c4c4</color>
+    <color name="txtColor5">#FFB342</color>
+    <color name="txtColor6">#5BC4C4C4</color>
+
+    <color name="gradientColor1">#022D48</color>
+    <color name="gradientColor2">#1589AE</color>
+
+    <color name="btnActive">#0573FE</color>
+    <color name="btnInactive">#434343</color>
+    <color name="btnColor1">#3282B8</color>
+    <color name="btnColor2">#00C0F9</color>
+    <color name="btnSummit">#0573FE</color>
+    <color name="btnCancel">#FE6161</color>
+</resources>

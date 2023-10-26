@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/tasks_menu"
+        android:icon="@drawable/baseline_task_24"
+        android:title="Tasks"/>
+    <item
+        android:id="@+id/favorite_menu"
+        android:icon="@drawable/baseline_bookmark_24"
+        android:title="Favorite"/>
+    <item
+        android:id="@+id/profile_menu"
+        android:icon="@drawable/baseline_switch_account_24"
+        android:title="Profile"/>
+    <item
+        android:id="@+id/setting_menu"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Setting"/>
+
+</menu>

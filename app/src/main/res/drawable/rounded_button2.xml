@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Button's background when pressed -->
+    <item android:state_pressed="false" >
+        <shape>
+            <solid android:color="@color/btnSummit" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <!-- Button's background when focused -->
+    <item  android:state_focused="true">
+        <shape>
+            <solid android:color="@color/btnColor2" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+    <!-- Default button's background -->
+    <item>
+        <shape>
+            <solid android:color="@color/btnColor2" />
+            <corners android:radius="20dp" />
+        </shape>
+    </item>
+</selector>

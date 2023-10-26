@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/bodyColor2"
+    tools:context=".Fragment.TasksFragment"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@color/bodyColor1"
+        android:elevation="5dp"
+        >
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jobs Notification List"
+            android:fontFamily="@font/poppins_regular"
+            android:textColor="@color/black"
+            android:layout_margin="15dp"
+            android:textSize="20dp" />
+
+        <LinearLayout
+            android:id="@+id/JobsLayout"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="60dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/jobs_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:tabPaddingStart="25dp"
+                app:tabPaddingEnd="25dp"
+                app:tabMode="fixed"
+                app:tabGravity="center"
+                app:tabIndicatorGravity="stretch"
+                app:tabTextColor="@color/txtColor2"
+                app:tabSelectedTextColor="@color/white"
+                app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+                app:tabIndicatorAnimationMode="elastic"
+                app:tabIndicator="@drawable/jobstab_indicator"
+                app:tabIndicatorColor="@color/btnSummit"
+                />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:layout_marginTop="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/jobsview_pager"/>
+
+
+
+</FrameLayout>
