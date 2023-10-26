@@ -1,13 +1,10 @@
 package com.example.warroomapp.Fragment;
-import com.example.warroomapp.Activity.HomeActivity;
 import com.example.warroomapp.Activity.LoginActivity;
-import com.example.warroomapp.Activity.LoginRes;
 
 import static com.example.warroomapp.Adaptor.ImageCustom.getRoundedCornerBitmap;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
@@ -18,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 //import com.example.warroomapp.Activity.User;
 import com.example.warroomapp.R;

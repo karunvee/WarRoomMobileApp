@@ -1,6 +1,10 @@
 package com.example.warroomapp.Activity;
 
+import static android.app.PendingIntent.getActivity;
+
 import com.example.warroomapp.SharedPreferencesManager;
+import com.example.warroomapp.JobTaskParameter;
+
 import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -12,8 +16,6 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -22,21 +24,36 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.warroomapp.Fragment.FavoriteFragment;
 import com.example.warroomapp.Fragment.ProfileFragment;
 import com.example.warroomapp.Fragment.SettingFragment;
 import com.example.warroomapp.Fragment.TasksFragment;
 import com.example.warroomapp.R;
+import com.example.warroomapp.TaskCardAdapter;
 import com.example.warroomapp.databinding.ActivityHomeBinding;
-import com.example.warroomapp.databinding.ActivityMainBinding;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 public class HomeActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private TaskCardAdapter taskAdapter;
+    private ArrayList<Integer> JobIndex = new ArrayList<Integer>();
+    private  ArrayList<JobTaskParameter> jobContainers = new ArrayList<JobTaskParameter>();
     private SharedPreferencesManager sharedPrefManager;
     private WebSocketClient mWebSocketClient;
     private LoginRes loginResponse;
@@ -109,7 +126,8 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 //                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-                        createNotification(loginResponse);
+                        Log.i("LOG_MSG", "message :\n" + message);
+                        StoreJobArray(message);
                     }
                 });
             }
@@ -127,6 +145,47 @@ public class HomeActivity extends AppCompatActivity {
         mWebSocketClient.connect();
     }
 
+    private void StoreJobArray(String jsonString){
+        try {
+            JSONObject json = new JSONObject(jsonString);
+            JSONArray JobTaskArray = json.getJSONArray("jobtask_info");
+
+            for (int i = 0; i < JobTaskArray.length(); i++) {
+                JSONObject JobList = JobTaskArray.getJSONObject(i);
+                int id = JobList.getInt("pk");
+                String plant = JobList.getString("plant");
+                String line = JobList.getString("line");
+                String machine = JobList.getString("machine");
+                String equipId = JobList.getString("equipId");
+                String name = JobList.getString("name");
+                String description = JobList.getString("description");
+                String typeof = JobList.getString("typeof");
+                String start_date = JobList.getString("issued_date");
+                String ended_date = JobList.getString("ended_date");
+                String responder_member = JobList.getString("responder_member");
+
+                if(!JobIndex.contains(id)){
+                    JobIndex.add(id);
+                    Log.i("LOG_MSG", "JobTaskArray jobIndex " + JobIndex.get(i) );
+                    jobContainers.add(new JobTaskParameter(id, plant, line, machine,
+                            equipId, name, description, typeof,
+                            responder_member, start_date, ended_date));
+
+                    createNotification(jobContainers.get(i));
+
+                    recyclerView = findViewById(R.id.allJob_RecyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
+                    taskAdapter = new TaskCardAdapter(jobContainers);
+                    recyclerView.setAdapter(taskAdapter);
+                }
+            }
+
+        }
+        catch (Exception ex){
+            Log.i("LOG_MSG", "StoreJobArray " + ex.getMessage());
+        }
+    }
     private void NotificationPermission(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             if(ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.POST_NOTIFICATIONS) !=
@@ -136,11 +195,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
-    private void createNotification(LoginRes loginResponse) {
+    private void createNotification(JobTaskParameter jobTaskParameter) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.icon_arrow_right_color2_36)
-                .setContentTitle("textTitle")
-                .setContentText("textContent")
+//                .setContentTitle("["+ jobTaskParameter.getLine() +"] "+ jobTaskParameter.getMachine())
+                .setContentTitle(String.format("[%s] %s", jobTaskParameter.getLine(), jobTaskParameter.getMachine()))
+                .setContentText(jobTaskParameter.getJob() + ", " + jobTaskParameter.getDescription())
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
@@ -149,9 +209,9 @@ public class HomeActivity extends AppCompatActivity {
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.putExtra("LoginRes", loginResponse);
+//        intent.putExtra("LoginRes", loginResponse);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent pendingIntent = getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_MUTABLE);
         builder.setContentIntent(pendingIntent);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -168,7 +228,7 @@ public class HomeActivity extends AppCompatActivity {
                 notificationManager.createNotificationChannel(notificationChannel);
             }
         }
-        notificationManager.notify(0,builder.build());
+        notificationManager.notify(jobTaskParameter.getId(),builder.build());
     }
     private void profileDataUpdate(ProfileFragment profileFragment, SharedPreferencesManager sharedPrefManager){
         Bundle bundle = new Bundle();

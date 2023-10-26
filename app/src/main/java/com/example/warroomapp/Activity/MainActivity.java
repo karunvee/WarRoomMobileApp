@@ -5,36 +5,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.widget.ProgressBar;
 import android.widget.Toast;
+
 
 import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesManager;
-import com.google.gson.annotations.SerializedName;
 
-import java.text.MessageFormat;
-
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 public class MainActivity extends AppCompatActivity {
 
     private interface ApiService{
         @GET("user_info/{userId}/")
-        Call<UserInfoRes> getUserInfo( @Path("userId") int userId);
+        Call<UserInfoRes> getUserInfo(@Path("userId") int userId);
     }
     private SharedPreferencesManager sharedPrefManager;
 
