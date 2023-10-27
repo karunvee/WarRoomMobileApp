@@ -2,6 +2,8 @@ package com.example.warroomapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.ArrayList;
+
 public class SharedPreferencesManager {
 
     private static final String KEY_API_URL = "api_url";
@@ -40,7 +42,6 @@ public class SharedPreferencesManager {
         editor.putString(KEY_IMAGE, image);
         editor.apply();
     }
-
     public void saveApiUrl(String ApiUrl){
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_API_URL, ApiUrl);

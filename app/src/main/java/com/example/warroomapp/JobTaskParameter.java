@@ -1,8 +1,13 @@
 package com.example.warroomapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 
-public class JobTaskParameter {
+public class JobTaskParameter implements Parcelable {
     private int id;
     private String plant_name;
     private String line_name;
@@ -14,6 +19,32 @@ public class JobTaskParameter {
     private String responder;
     private String start_date;
     private String end_date;
+
+    protected JobTaskParameter(Parcel in) {
+        id = in.readInt();
+        plant_name = in.readString();
+        line_name = in.readString();
+        machine_name = in.readString();
+        equipId = in.readString();
+        job_name = in.readString();
+        description = in.readString();
+        type_of = in.readString();
+        responder = in.readString();
+        start_date = in.readString();
+        end_date = in.readString();
+    }
+
+    public static final Creator<JobTaskParameter> CREATOR = new Creator<JobTaskParameter>() {
+        @Override
+        public JobTaskParameter createFromParcel(Parcel in) {
+            return new JobTaskParameter(in);
+        }
+
+        @Override
+        public JobTaskParameter[] newArray(int size) {
+            return new JobTaskParameter[size];
+        }
+    };
 
     public  int getId() { return  id;}
     public String getPlant() { return plant_name;}
@@ -41,5 +72,25 @@ public class JobTaskParameter {
         this.responder = responder;
         this.start_date = start_date;
         this.end_date = end_date;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(plant_name);
+        parcel.writeString(line_name);
+        parcel.writeString(machine_name);
+        parcel.writeString(equipId);
+        parcel.writeString(job_name);
+        parcel.writeString(description);
+        parcel.writeString(type_of);
+        parcel.writeString(responder);
+        parcel.writeString(start_date);
+        parcel.writeString(end_date);
     }
 }

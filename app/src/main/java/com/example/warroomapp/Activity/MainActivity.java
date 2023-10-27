@@ -1,6 +1,8 @@
 package com.example.warroomapp.Activity;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,7 +10,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.warroomapp.NotificationService;
 import com.example.warroomapp.R;
+import com.example.warroomapp.Restarter;
 import com.example.warroomapp.SharedPreferencesManager;
 
 import okhttp3.OkHttpClient;
@@ -21,7 +25,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public class MainActivity extends AppCompatActivity {
-
+    Intent mServiceIntent;
+    private NotificationService notificationService;
     private interface ApiService{
         @GET("user_info/{userId}/")
         Call<UserInfoRes> getUserInfo(@Path("userId") int userId);
@@ -35,8 +40,14 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPrefManager = new SharedPreferencesManager(this);
 
+        notificationService = new NotificationService();
+        mServiceIntent = new Intent(this, notificationService.getClass());
+        if (!isMyServiceRunning(notificationService.getClass())) {
+            startService(mServiceIntent);
+        }
+
         Toast.makeText(getApplicationContext(), sharedPrefManager.getTokenId() + " @ " + sharedPrefManager.getUserId(), Toast.LENGTH_SHORT).show();
-        int delayMillis = 1000; // Adjust this value as needed
+        int delayMillis = 500; // Adjust this value as needed
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -50,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }, delayMillis);
     }
-
-
 
     private void getUserInfoToUpdate(String tokenId, int userId){
 
@@ -112,6 +121,27 @@ public class MainActivity extends AppCompatActivity {
             Log.i("LOG_MSG", "getUserInfo: " + e.toString());
         }
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i ("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i ("Service status", "Not running");
+        return false;
+    }
+    @Override
+    protected void onDestroy() {
+        //stopService(mServiceIntent);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("restartservice");
+        broadcastIntent.setClass(this, Restarter.class);
+        this.sendBroadcast(broadcastIntent);
+        super.onDestroy();
     }
 }
 

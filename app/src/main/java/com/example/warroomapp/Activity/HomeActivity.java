@@ -2,6 +2,8 @@ package com.example.warroomapp.Activity;
 
 import static android.app.PendingIntent.getActivity;
 
+import com.example.warroomapp.Fragment.AllJobsFragment;
+import com.example.warroomapp.NotificationService;
 import com.example.warroomapp.SharedPreferencesManager;
 import com.example.warroomapp.JobTaskParameter;
 
@@ -15,7 +17,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -24,6 +29,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +39,7 @@ import com.example.warroomapp.Fragment.SettingFragment;
 import com.example.warroomapp.Fragment.TasksFragment;
 import com.example.warroomapp.R;
 import com.example.warroomapp.TaskCardAdapter;
+import com.example.warroomapp.WebSocketViewModel;
 import com.example.warroomapp.databinding.ActivityHomeBinding;
 
 import org.java_websocket.client.WebSocketClient;
@@ -42,6 +49,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.json.JSONArray;
@@ -52,7 +60,7 @@ import org.json.JSONObject;
 public class HomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TaskCardAdapter taskAdapter;
-    private ArrayList<Integer> JobIndex = new ArrayList<Integer>();
+    private ArrayList<Integer> StoredTasks = new ArrayList<>();
     private  ArrayList<JobTaskParameter> jobContainers = new ArrayList<JobTaskParameter>();
     private SharedPreferencesManager sharedPrefManager;
     private WebSocketClient mWebSocketClient;
@@ -64,7 +72,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         NotificationPermission();
-
+//        startService();
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new TasksFragment());
@@ -72,24 +80,38 @@ public class HomeActivity extends AppCompatActivity {
 //        loginResponse = (LoginRes) intent.getSerializableExtra("LoginRes");
 
         sharedPrefManager = new SharedPreferencesManager(getApplicationContext());
+        if(sharedPrefManager.getUserId() == 0){
+            Toast.makeText(getApplicationContext(), "No Data", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         binding.btnNavigationView.setOnItemSelectedListener(item -> {
 
             if (item.getItemId() == R.id.tasks_menu) {
-                replaceFragment(new TasksFragment());
+                TasksFragment tasksFragment = new TasksFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList(TasksFragment.ARG_JOB_CONTAINERS, (ArrayList<? extends Parcelable>) jobContainers);
+                tasksFragment.setArguments(bundle);
+                replaceFragment(tasksFragment);
             } else if (item.getItemId() == R.id.favorite_menu) {
                 replaceFragment(new FavoriteFragment());
+
             } else if (item.getItemId() == R.id.profile_menu) {
                 ProfileFragment profileFragment = new ProfileFragment();
                 profileDataUpdate(profileFragment, sharedPrefManager);
                 replaceFragment(profileFragment);
+
             } else if (item.getItemId() == R.id.setting_menu) {
                 replaceFragment(new SettingFragment());
             }
             return true;
         });
 
-        connectWebSocket();
+//        WebSocketViewModel viewModel = new ViewModelProvider(this).get(WebSocketViewModel.class);
+//        viewModel.connectWebSocket("ws://10.234.232.193:8000/ws/job_and_member/");
+                connectWebSocket();
     }
     @Override
     protected void onStop() {
@@ -100,7 +122,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mWebSocketClient.close();
+//        mWebSocketClient.close();
     }
 
     private void connectWebSocket() {
@@ -145,10 +167,11 @@ public class HomeActivity extends AppCompatActivity {
         mWebSocketClient.connect();
     }
 
-    private void StoreJobArray(String jsonString){
+    public void StoreJobArray(String jsonString){
         try {
             JSONObject json = new JSONObject(jsonString);
             JSONArray JobTaskArray = json.getJSONArray("jobtask_info");
+            ArrayList<Integer> CurrentTasks = new ArrayList<Integer>();
 
             for (int i = 0; i < JobTaskArray.length(); i++) {
                 JSONObject JobList = JobTaskArray.getJSONObject(i);
@@ -163,23 +186,49 @@ public class HomeActivity extends AppCompatActivity {
                 String start_date = JobList.getString("issued_date");
                 String ended_date = JobList.getString("ended_date");
                 String responder_member = JobList.getString("responder_member");
-
-                if(!JobIndex.contains(id)){
-                    JobIndex.add(id);
-                    Log.i("LOG_MSG", "JobTaskArray jobIndex " + JobIndex.get(i) );
+                CurrentTasks.add(id);
+                if(!StoredTasks.contains(id)){
+                    StoredTasks.add(id);
+                    Log.i("LOG_MSG", "JobTaskArray jobIndex " + StoredTasks.get(i) );
                     jobContainers.add(new JobTaskParameter(id, plant, line, machine,
                             equipId, name, description, typeof,
                             responder_member, start_date, ended_date));
 
                     createNotification(jobContainers.get(i));
-
-                    recyclerView = findViewById(R.id.allJob_RecyclerView);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-                    taskAdapter = new TaskCardAdapter(jobContainers);
-                    recyclerView.setAdapter(taskAdapter);
+//                    recyclerView = findViewById(R.id.allJob_RecyclerView);
+//                    recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//                    taskAdapter = new TaskCardAdapter(jobContainers);
+//                    recyclerView.setAdapter(taskAdapter);
                 }
             }
+            Log.i("LOG_MSG", "JobTaskArray CurrentTasks " + CurrentTasks);
+            Log.i("LOG_MSG", "JobTaskArray StoredTasks " + StoredTasks);
+
+            ArrayList<Integer> difference = new ArrayList<>(StoredTasks);
+            difference.removeAll(CurrentTasks);
+            Log.i("LOG_MSG", "JobTaskArray difference " + difference);
+
+
+            difference.forEach((_id) -> {
+                Log.i("LOG_MSG", "StoredTasks removing..." + _id);
+                for (JobTaskParameter job : jobContainers) {
+                    if (job.getId() == _id && taskAdapter != null) {
+
+                        taskAdapter.removeItemById(_id);
+                        Log.i("LOG_MSG", "JobTaskArray jobContainers was removed" + job.getId() );
+                        jobContainers.remove(job);
+                        StoredTasks.removeIf(item -> item == _id);
+                        break;
+                    }
+                }
+
+            });
+
+            recyclerView = findViewById(R.id.allJob_RecyclerView);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            taskAdapter = new TaskCardAdapter(jobContainers);
+            recyclerView.setAdapter(taskAdapter);
+//            taskAdapter.updateAdapter(jobContainers);
 
         }
         catch (Exception ex){
@@ -247,6 +296,5 @@ public class HomeActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_home, fragment);
         fragmentTransaction.commit();
     }
-
 
 }
