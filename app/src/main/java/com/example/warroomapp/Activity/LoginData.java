@@ -9,12 +9,12 @@ public class LoginData {
     @SerializedName("password")
     private String password;
 
-    @SerializedName("domain")
-    private String domain;
+    @SerializedName("ad_server")
+    private String ad_server;
 
-    public LoginData(String username, String password, String domain) {
+    public LoginData(String username, String password, String ad_server) {
         this.username = username;
         this.password = password;
-        this.domain = domain;
+        this.ad_server = ad_server;
     }
 }

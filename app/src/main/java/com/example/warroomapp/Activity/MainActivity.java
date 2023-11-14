@@ -10,10 +10,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 
+import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.NotificationService;
 import com.example.warroomapp.R;
 import com.example.warroomapp.Restarter;
 import com.example.warroomapp.SharedPreferencesManager;
+import com.example.warroomapp.SharedPreferencesSetting;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -25,13 +27,15 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 
 public class MainActivity extends AppCompatActivity {
+    private static GlobalVariable globalVariable = new GlobalVariable();
     Intent mServiceIntent;
     private NotificationService notificationService;
     private interface ApiService{
-        @GET("user_info/{userId}/")
+        @GET("/user_info/{userId}/")
         Call<UserInfoRes> getUserInfo(@Path("userId") int userId);
     }
     private SharedPreferencesManager sharedPrefManager;
+    private SharedPreferencesSetting sharedPrefSetting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         sharedPrefManager = new SharedPreferencesManager(this);
+        sharedPrefSetting = new SharedPreferencesSetting(this);
 
         notificationService = new NotificationService();
         mServiceIntent = new Intent(this, notificationService.getClass());
@@ -69,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.234.232.193:8000/") // Replace with your API base URL
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API base URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
@@ -84,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                     if (response.isSuccessful()) {
                         UserInfoRes apiResponse = response.body();
                         // Handle the response data here
-                        Toast.makeText(getApplicationContext(), apiResponse.getUser().getName() + "! GET" , Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Welcome! "+ apiResponse.getUser().getName() , Toast.LENGTH_SHORT).show();
 
                         sharedPrefManager.saveUserData(
                                 tokenId,

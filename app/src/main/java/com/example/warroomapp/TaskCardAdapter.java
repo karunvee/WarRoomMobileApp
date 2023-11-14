@@ -32,8 +32,13 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
     public void onBindViewHolder(ViewHolder  holder, int position) {
         try{
             JobTaskParameter job = jobContainers.get(position);
-            holder.nameTextView.setText(job.getJob());
-            holder.descriptionTextView.setText(job.getDescription());
+
+            holder.txtMachineName.setText(job.getMachine());
+            holder.txtType.setText(job.getTypeOf());
+            holder.txtLineName.setText(job.getLine());
+            holder.txtErrorCode.setText(job.getJob());
+            holder.txtIssuedDate.setText(job.getStartDate());
+            holder.txtDescription.setText(job.getDescription());
         }
         catch (Exception ex){
             Log.i("LOG_MSG", "onBindViewHolder " + ex.getMessage());
@@ -62,13 +67,21 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
     }
 
     public static class ViewHolder  extends RecyclerView.ViewHolder {
-        TextView nameTextView;
-        TextView descriptionTextView;
+        TextView txtMachineName;
+        TextView txtType;
+        TextView txtLineName;
+        TextView txtErrorCode;
+        TextView txtIssuedDate;
+        TextView txtDescription;
 
         public ViewHolder (View view) {
             super(view);
-            nameTextView = view.findViewById(R.id.nameTextView);
-            descriptionTextView = view.findViewById(R.id.descriptionTextView);
+            txtMachineName = view.findViewById(R.id.txtMachineName);
+            txtType = view.findViewById(R.id.txtType);
+            txtLineName = view.findViewById(R.id.txtLineName);
+            txtErrorCode = view.findViewById(R.id.txtErrorCode);
+            txtIssuedDate = view.findViewById(R.id.txtIssuedDate);
+            txtDescription = view.findViewById(R.id.txtDescription);
         }
     }
 }

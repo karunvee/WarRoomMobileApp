@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import java.util.ArrayList;
 
 public class SharedPreferencesManager {
-
     private static final String KEY_API_URL = "api_url";
     private static final String PREF_NAME = "MyAppPrefs";
 

@@ -17,6 +17,7 @@ import android.util.Log;
 
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.warroomapp.Activity.HomeActivity;
@@ -64,9 +65,10 @@ public class NotificationService extends Service {
         NotificationChannel channel = new NotificationChannel("default", "Foreground Service", NotificationManager.IMPORTANCE_DEFAULT);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         manager.createNotificationChannel(channel);
-
+        int iconBackgroundColor = ContextCompat.getColor(getApplicationContext(), R.color.bodyColor5);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default")
                 .setSmallIcon(R.drawable.ic_warroom_logo)
+                .setColor(iconBackgroundColor)
                 .setContentTitle("WarRoomNotice Service")
                 .setContentText("Notification Service is running in the foreground");
 

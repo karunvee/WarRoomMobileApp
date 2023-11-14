@@ -14,8 +14,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesManager;
+import com.example.warroomapp.SharedPreferencesSetting;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,11 +29,13 @@ import retrofit2.http.POST;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static GlobalVariable globalVariable = new GlobalVariable();
     private interface ApiService{
-        @POST("user_login/")
+        @POST("/user_login/")
         Call<LoginRes> login(@Body LoginData requestBody);
     }
     private SharedPreferencesManager sharedPrefManager;
+    private SharedPreferencesSetting sharedPrefSetting;
     private EditText txtUsername;
     private EditText txtPassword;
     private Button btnLogin;
@@ -39,8 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView txtResponseLogin;
 
     private ProgressBar progressBarLogin;
-
-    private Button btnSkip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,50 +76,24 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        btnSkip = findViewById(R.id.btnSkip);
-        btnSkip.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                LoginRes loginResponse = new LoginRes();
-                User user = new User();
-                loginResponse.status = "success";
-                loginResponse.token = "XXXXX116d542ce0cb136357d456deb30f0XXXXX";
-
-                user.id = 0;
-                user.username = "Username";
-                user.name = "Firstname Surname";
-                user.empNo = "123456789";
-                user.description = "Engineer level 5";
-                user.remark = "";
-                user.isUser = true;
-                user.isStaff = false;
-                user.image = "";
-
-                loginResponse.user = user;
-
-                intent.putExtra("LoginRes", loginResponse);
-                startActivity(intent);
-                finish();
-            }
-        });
     }
     public void LoginFunc(String username ,String password){
         sharedPrefManager = new SharedPreferencesManager(getApplicationContext());
+        sharedPrefSetting = new SharedPreferencesSetting(getApplicationContext());
+
         txtUsername.setEnabled(false);
         txtPassword.setEnabled(false);
         btnLogin.setEnabled(false);
         btnOpenSignUp.setEnabled(false);
         progressBarLogin.setVisibility(ProgressBar.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.234.232.193:8000/") // Replace with your API's base URL
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API's base URL
                 .addConverterFactory(GsonConverterFactory.create()) // Use Gson for JSON parsing
                 .build();
 
         ApiService apiService = retrofit.create(ApiService.class);
 
-        LoginData loginRequest = new LoginData(username, password, "delta.corp");
+        LoginData loginRequest = new LoginData(username, password, globalVariable.ad_server);
 
         apiService.login(loginRequest).enqueue(new Callback<LoginRes>() {
             @Override

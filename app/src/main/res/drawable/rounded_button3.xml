@@ -4,14 +4,14 @@
     <item android:state_pressed="false" >
         <shape>
             <solid android:color="@color/btnInactive" />
-            <corners android:radius="20dp" />
+            <corners android:radius="12px" />
         </shape>
     </item>
     <!-- Button's background when focused -->
     <item  android:state_focused="true">
         <shape>
             <solid android:color="@color/btnCancel" />
-            <corners android:radius="20dp" />
+            <corners android:radius="12px" />
         </shape>
     </item>
 

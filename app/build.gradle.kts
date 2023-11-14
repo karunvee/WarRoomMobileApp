@@ -34,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation("com.airbnb.android:lottie:6.1.0");
     implementation("org.java-websocket:Java-WebSocket:1.5.4");
     implementation("com.squareup.picasso:picasso:2.8");
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

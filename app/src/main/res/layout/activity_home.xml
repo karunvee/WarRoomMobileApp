@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".Activity.HomeActivity">
-
     <FrameLayout
         android:id="@+id/frame_home"
         android:layout_width="match_parent"
@@ -15,7 +14,19 @@
         app:layout_constraintBottom_toTopOf="@+id/btnNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></FrameLayout>
+        app:layout_constraintTop_toTopOf="parent">
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="10px"
+            android:layout_alignParentBottom="true"
+            android:padding="0px"
+            android:elevation="20dp"
+            android:visibility="visible"
+            android:progressDrawable="@drawable/progress_bar_background"/>
+
+    </FrameLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/btnNavigationView"

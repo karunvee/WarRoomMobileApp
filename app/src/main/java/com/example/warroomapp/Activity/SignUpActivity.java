@@ -15,11 +15,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.R;
+import com.example.warroomapp.SharedPreferencesSetting;
 import com.google.gson.annotations.SerializedName;
 
 import java.net.SocketTimeoutException;
 
+import kotlinx.coroutines.Delay;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,9 +33,10 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 public class SignUpActivity extends AppCompatActivity {
-
+    private  SharedPreferencesSetting sharedPrefSetting;
+    private static GlobalVariable globalVariable = new GlobalVariable();
     public interface ApiService{
-        @POST("sign_up_api/")
+        @POST("/sign_up_api/")
         Call<SignupRes> signup(@Body LoginData requestBody);
     }
     private EditText txtUsername;
@@ -41,6 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
     private  Button btnBackToLogin;
     private ProgressBar progressBarSignUp;
     private TextView txtResponseSignUp;
+    private LottieAnimationView animationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,8 @@ public class SignUpActivity extends AppCompatActivity {
         btnBackToLogin = findViewById(R.id.btnBackToLogin);
         progressBarSignUp = findViewById(R.id.progressBarSignUp);
         txtResponseSignUp = findViewById(R.id.txtResponseSignUp);
+
+        animationView = findViewById(R.id.success_animation);
 
         btnBackToLogin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,6 +87,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void SignUp(String username ,String password){
+        sharedPrefSetting = new SharedPreferencesSetting(getApplicationContext());
 
         txtUsername.setEnabled(false);
         txtPassword.setEnabled(false);
@@ -86,13 +95,13 @@ public class SignUpActivity extends AppCompatActivity {
         btnBackToLogin.setEnabled(false);
         progressBarSignUp.setVisibility(ProgressBar.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.234.232.193:8000/") // Replace with your API's base URL
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API's base URL
                 .addConverterFactory(GsonConverterFactory.create()) // Use Gson for JSON parsing
                 .build();
 
         SignUpActivity.ApiService apiService = retrofit.create(SignUpActivity.ApiService.class);
 
-        LoginData loginRequest = new LoginData(username, password, "delta.corp");
+        LoginData loginRequest = new LoginData(username, password, globalVariable.ad_server);
 
         apiService.signup(loginRequest).enqueue(new Callback<SignupRes>() {
             @Override
@@ -101,11 +110,20 @@ public class SignUpActivity extends AppCompatActivity {
                     SignupRes signupResponse = response.body();
                     if(signupResponse.status.toString().equals("success")){
                         // Handle the successful login response here
-                        displayMessage(txtResponseSignUp, R.drawable.correct_icon, "Sign up successfully",  R.drawable.message_box, 2000);
+                        animationView.setAnimation("success_animation.json");
+                        animationView.setVisibility(View.VISIBLE);
+                        animationView.playAnimation();
 
-                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
+                        displayMessage(txtResponseSignUp, R.drawable.correct_icon, "Sign up successfully",  R.drawable.message_box, 2000);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }, 1500);
+
                     }
                     else{
                         displayMessage(txtResponseSignUp, R.drawable.incorrect_icon, signupResponse.detail,  R.drawable.error_message_box, 3000);
