@@ -4,6 +4,7 @@ import static android.app.PendingIntent.getActivity;
 
 import static com.example.warroomapp.Adaptor.ImageCustom.getRoundedCornerBitmap;
 
+import com.example.warroomapp.Adaptor.ViewPagerAdapter;
 import com.example.warroomapp.Fragment.AllJobsFragment;
 import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.NotificationService;
@@ -25,12 +26,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -41,6 +44,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.warroomapp.Fragment.FavoriteFragment;
 import com.example.warroomapp.Fragment.ProfileFragment;
@@ -51,6 +55,7 @@ import com.example.warroomapp.SharedPreferencesSetting;
 import com.example.warroomapp.TaskCardAdapter;
 import com.example.warroomapp.WebSocketViewModel;
 import com.example.warroomapp.databinding.ActivityHomeBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -82,7 +87,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements TasksFragment.OnFunctionCallListener {
     private static GlobalVariable globalVariable = new GlobalVariable();
 
     private interface ApiService{
@@ -104,77 +109,102 @@ public class HomeActivity extends AppCompatActivity {
     private LoginRes loginResponse;
     private String CHANNEL_ID = "task_channel";
     private Integer previous_fragmentId = 0;
-    ActivityHomeBinding binding;
+
     private ProgressBar progress;
     private ProgressBarAnimation anim;
-
+    private TasksFragment tasksFragment = new TasksFragment();
+    private FavoriteFragment favoriteFragment = new FavoriteFragment();
+    private ProfileFragment profileFragment = new ProfileFragment();
+    private SettingFragment settingFragment = new SettingFragment();
+    private ViewPager viewPager;
+    private BottomNavigationView bottomNavigationView;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         Log.i("LOG_MSG", "HomeActivity onCreate");
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+
         NotificationPermission();
 
         sharedPrefManager = new SharedPreferencesManager(getApplicationContext());
         sharedPrefSetting = new SharedPreferencesSetting(getApplicationContext());
         if(sharedPrefManager.getUserId() == 0){
-            Toast.makeText(getApplicationContext(), "No Data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Please sign-in!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
-        binding = ActivityHomeBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
-        replaceFragment(new TasksFragment(), 1);
-
         progress = findViewById(R.id.progressBar);
         anim = new ProgressBarAnimation(progress, 0, 100);
         anim.setDuration(1500);
 
-        binding.btnNavigationView.setOnItemSelectedListener(item -> {
 
-            if (item.getItemId() == R.id.tasks_menu) {
-                TasksFragment tasksFragment = new TasksFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(TasksFragment.ARG_JOB_CONTAINERS, (ArrayList<? extends Parcelable>) AllJobContainers);
-                tasksFragment.setArguments(bundle);
-                replaceFragment(tasksFragment, 1);
 
-            } else if (item.getItemId() == R.id.favorite_menu) {
-                replaceFragment(new FavoriteFragment(), 2);
+        try{
+            viewPager = findViewById(R.id.frame_home);
+            ViewPagerAdapter ViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+            viewPager.setAdapter(ViewPagerAdapter);
+            viewPager.setOffscreenPageLimit(3);
 
-            } else if (item.getItemId() == R.id.profile_menu) {
-                ProfileFragment profileFragment = new ProfileFragment();
-                profileDataUpdate(profileFragment, sharedPrefManager);
-                replaceFragment(profileFragment, 3);
+            bottomNavigationView = findViewById(R.id.btnNavigationView);
+            bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-            } else if (item.getItemId() == R.id.setting_menu) {
-                replaceFragment(new SettingFragment(), 4);
-            }
-            return true;
-        });
+                    if (item.getItemId() == R.id.tasks_menu) {
+                        viewPager.setCurrentItem(0, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.favorite_menu) {
+                        viewPager.setCurrentItem(1, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.profile_menu) {
+                        viewPager.setCurrentItem(2, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.setting_menu) {
+                        viewPager.setCurrentItem(3, false);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
+        }catch (Exception e){
+            Log.i("LOG_MSG", "binding" + e.getMessage());
+        }
 
 //        WebSocketViewModel viewModel = new ViewModelProvider(this).get(WebSocketViewModel.class);
 //        viewModel.connectWebSocket("ws://10.234.232.193:8000/ws/job_and_member/");
 
         try{
-
+            connectWebSocket();
+//            getJobUpdate(sharedPrefManager.getTokenId());
         }catch (Exception e){
             Log.i("LOG_MSG", "Exception" + e.getMessage());
         }
-        connectWebSocket();
-        getJobUpdate(sharedPrefManager.getTokenId());
+
     }
+
+    @Override
+    public void onBackPressed() {
+        if (viewPager.getCurrentItem() == 0) {
+            super.onBackPressed();
+        } else {
+            viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
+        }
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
+        Log.i("LOG_MSG", "onStop");
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        mWebSocketClient.close();
+        Log.i("LOG_MSG", "HomeActivity was destroy");
     }
 
     private void connectWebSocket() {
@@ -248,22 +278,18 @@ public class HomeActivity extends AppCompatActivity {
 
                 if(ended_date.equals("-")){
                     if(responder_member.equals(sharedPrefManager.getUsername())){
-                        Log.i("LOG_MSG", "responder_member");
                         Current_MyTasks.add(id);
                         if(!Stored_MyTasks.contains(id)){
                             Stored_MyTasks.add(id);
-                            Log.i("LOG_MSG", "JobTaskArray my jobIndex " + machine + "..." + responder_member + "..." + sharedPrefManager.getUsername());
                             MyJobContainers.add(job);
                             EntireJobContainers.add(job);
                             createNotification(EntireJobContainers.get(i));
                         }
                     }
                     else{
-                        Log.i("LOG_MSG", "non-assigned");
                         Current_AllTasks.add(id);
                         if(!Stored_AllTasks.contains(id)){
                             Stored_AllTasks.add(id);
-                            Log.i("LOG_MSG", "JobTaskArray All jobIndex " + machine );
                             AllJobContainers.add(job);
                             EntireJobContainers.add(job);
                             createNotification(EntireJobContainers.get(i));
@@ -272,18 +298,14 @@ public class HomeActivity extends AppCompatActivity {
                 }else{  EntireJobContainers.add(job); }
 
             }
-            Log.i("LOG_MSG", "JobTaskArray Current_MyTasks :" + Current_MyTasks + " Stored_MyTasks :" + Stored_MyTasks);
             ArrayList<Integer> difference_MyTasks = new ArrayList<>(Stored_MyTasks);
             difference_MyTasks.removeAll(Current_MyTasks);
-            Log.i("LOG_MSG", "JobTaskArray difference_MyTasks " + difference_MyTasks);
 
             difference_MyTasks.forEach((_id) -> {
-                Log.i("LOG_MSG", "StoredTasks removing..." + _id);
                 for (JobTaskParameter job : MyJobContainers) {
                     if (job.getId() == _id && MyTaskAdapter != null) {
 
                         MyTaskAdapter.removeItemById(_id);
-                        Log.i("LOG_MSG", "JobTaskArray MyJobContainers was removed" + job.getId() );
                         MyJobContainers.remove(job);
                         Stored_MyTasks.removeIf(item -> item == _id);
                         break;
@@ -291,18 +313,14 @@ public class HomeActivity extends AppCompatActivity {
                 }
             });
 
-            Log.i("LOG_MSG", "JobTaskArray Current_AllTasks :" + Current_AllTasks + " Stored_AllTasks :" + Stored_AllTasks);
             ArrayList<Integer> difference_AllTasks = new ArrayList<>(Stored_AllTasks);
             difference_AllTasks.removeAll(Current_AllTasks);
-            Log.i("LOG_MSG", "JobTaskArray difference_AllTasks " + difference_AllTasks);
 
             difference_AllTasks.forEach((_id) -> {
-                Log.i("LOG_MSG", "StoredTasks removing..." + _id);
                 for (JobTaskParameter job : AllJobContainers) {
                     if (job.getId() == _id && AllTaskAdapter != null) {
 
                         AllTaskAdapter.removeItemById(_id);
-                        Log.i("LOG_MSG", "JobTaskArray AllJobContainers was removed" + job.getId() );
                         AllJobContainers.remove(job);
                         Stored_AllTasks.removeIf(item -> item == _id);
                         break;
@@ -315,6 +333,19 @@ public class HomeActivity extends AppCompatActivity {
 
             AllTaskAdapter = new TaskCardAdapter(AllJobContainers);
             MyTaskAdapter = new TaskCardAdapter(MyJobContainers);
+
+            AllTaskAdapter.setOnItemClickListener(new TaskCardAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    // Handle the item click here, for example:
+                    JobTaskParameter clickedTask = AllJobContainers.get(position);
+                    Toast.makeText(getApplicationContext(), clickedTask.getMachine(), Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(HomeActivity.this, MachineActivity.class);
+                    startActivity(intent);
+                    // Do something with the clicked task
+                }
+            });
 
             recyclerView_allJob.setLayoutManager(new LinearLayoutManager(this));
             recyclerView_myJob.setLayoutManager(new LinearLayoutManager(this));
@@ -392,9 +423,7 @@ public class HomeActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        Log.i("LOG_MSG", "Id " + Id + "// Previous Id " + previous_fragmentId);
         if( Id > previous_fragmentId){
-            Log.i("LOG_MSG", "Left to Right" );
             fragmentTransaction
                     .setCustomAnimations(R.anim.fragment_right_to_left, R.anim.fragmen_exit_right_to_left, R.anim.fragment_left_to_right, R.anim.fragment_exit_left_to_right)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -402,7 +431,6 @@ public class HomeActivity extends AppCompatActivity {
                     .replace(R.id.frame_home, fragment);
 
         } else if (Id < previous_fragmentId) {
-            Log.i("LOG_MSG", "Right to Left" );
             fragmentTransaction
                     .setCustomAnimations(R.anim.fragment_left_to_right, R.anim.fragment_exit_left_to_right, R.anim.fragment_right_to_left, R.anim.fragmen_exit_right_to_left)
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
@@ -413,9 +441,9 @@ public class HomeActivity extends AppCompatActivity {
 
         previous_fragmentId = Id;
     }
-    private void getJobUpdate(String tokenId){
-        ProgressBarAnimation animChild = new ProgressBarAnimation(progress, 0, 30);
-        animChild.setDuration(2000);
+    public void getJobUpdate(String tokenId){
+        ProgressBarAnimation animChild = new ProgressBarAnimation(progress, 0, 20);
+        animChild.setDuration(500);
         progress.setVisibility(View.VISIBLE);
         progress.startAnimation(animChild);
 
@@ -436,8 +464,8 @@ public class HomeActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<CommonRes> call, Response<CommonRes> response) {
                     if (response.isSuccessful()) {
-                        ProgressBarAnimation animChild2 = new ProgressBarAnimation(progress, 30, 100);
-                        animChild2.setDuration(2000);
+                        ProgressBarAnimation animChild2 = new ProgressBarAnimation(progress, 20, 50);
+                        animChild2.setDuration(1000);
                         progress.setVisibility(View.VISIBLE);
                         progress.startAnimation(animChild2);
 //                        Toast.makeText(getApplicationContext(), "Job tasks update successfully!", Toast.LENGTH_SHORT).show();
@@ -473,7 +501,7 @@ public class HomeActivity extends AppCompatActivity {
             float value = from + (to - from) * interpolatedTime;
             progressBar.setProgress((int) value);
 
-            if (value >= to) {
+            if (value >= 100) {
                 // Hide the ProgressBar when the target value is reached
                 progressBar.setVisibility(View.GONE);
             }

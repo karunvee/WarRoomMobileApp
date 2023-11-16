@@ -1,10 +1,17 @@
 package com.example.warroomapp;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -12,7 +19,7 @@ import java.util.List;
 
 public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHolder > {
     private ArrayList<JobTaskParameter> jobContainers;
-
+    private OnItemClickListener onItemClickListener;
     public TaskCardAdapter(ArrayList<JobTaskParameter> jobContainers) {
         this.jobContainers = jobContainers;
     }
@@ -29,7 +36,7 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder  holder, int position) {
+    public void onBindViewHolder(ViewHolder  holder, @SuppressLint("RecyclerView") int position) {
         try{
             JobTaskParameter job = jobContainers.get(position);
 
@@ -39,6 +46,22 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
             holder.txtErrorCode.setText(job.getJob());
             holder.txtIssuedDate.setText(job.getStartDate());
             holder.txtDescription.setText(job.getDescription());
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(position);
+
+                        // Add ripple animation here
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                            Drawable rippleDrawable = ContextCompat.getDrawable(v.getContext(), R.drawable.custom_ripple);
+//                            holder.itemView.setBackground(rippleDrawable);
+//                        }
+                        holder.itemView.setBackgroundResource(R.drawable.custom_ripple_card);
+                    }
+                }
+            });
         }
         catch (Exception ex){
             Log.i("LOG_MSG", "onBindViewHolder " + ex.getMessage());
@@ -84,4 +107,11 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
             txtDescription = view.findViewById(R.id.txtDescription);
         }
     }
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
 }
