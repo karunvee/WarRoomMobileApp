@@ -4,14 +4,17 @@ import static android.app.PendingIntent.getActivity;
 
 import static com.example.warroomapp.Adaptor.ImageCustom.getRoundedCornerBitmap;
 
+import com.example.warroomapp.Activity.Class.ActivityUtils;
 import com.example.warroomapp.Adaptor.ViewPagerAdapter;
 import com.example.warroomapp.Fragment.AllJobsFragment;
 import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.NotificationService;
+import com.example.warroomapp.SharedPreferencesMachine;
 import com.example.warroomapp.SharedPreferencesManager;
 import com.example.warroomapp.JobTaskParameter;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -26,11 +29,16 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,8 +62,8 @@ import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesSetting;
 import com.example.warroomapp.TaskCardAdapter;
 import com.example.warroomapp.WebSocketViewModel;
-import com.example.warroomapp.databinding.ActivityHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.annotations.SerializedName;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -90,9 +98,24 @@ import retrofit2.http.Path;
 public class HomeActivity extends AppCompatActivity implements TasksFragment.OnFunctionCallListener {
     private static GlobalVariable globalVariable = new GlobalVariable();
 
+    public class RequestBodyPersonToJob {
+        @SerializedName("jid")
+        private String jid;
+
+        @SerializedName("uid")
+        private String uid;
+
+        public RequestBodyPersonToJob(String jid, String uid) {
+            this.jid = jid;
+            this.uid = uid;
+        }
+    }
     private interface ApiService{
         @GET("/job_update/")
         Call<CommonRes> getJobUpdate();
+
+        @POST("/UpdatePICtoJob/")
+        Call<CommonRes> postPersonToJob (@Body RequestBodyPersonToJob requestBodyPersonToJob);
     }
     private RecyclerView recyclerView_allJob;
     private RecyclerView recyclerView_myJob;
@@ -112,12 +135,11 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
 
     private ProgressBar progress;
     private ProgressBarAnimation anim;
-    private TasksFragment tasksFragment = new TasksFragment();
-    private FavoriteFragment favoriteFragment = new FavoriteFragment();
-    private ProfileFragment profileFragment = new ProfileFragment();
-    private SettingFragment settingFragment = new SettingFragment();
     private ViewPager viewPager;
     private BottomNavigationView bottomNavigationView;
+    private Dialog taskConfirm_dialog;
+
+    private boolean HomeActivityAlive = false;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         Log.i("LOG_MSG", "HomeActivity onCreate");
@@ -138,72 +160,40 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
         anim = new ProgressBarAnimation(progress, 0, 100);
         anim.setDuration(1500);
 
-
-
-        try{
-            viewPager = findViewById(R.id.frame_home);
-            ViewPagerAdapter ViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-            viewPager.setAdapter(ViewPagerAdapter);
-            viewPager.setOffscreenPageLimit(3);
-
-            bottomNavigationView = findViewById(R.id.btnNavigationView);
-            bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-                    if (item.getItemId() == R.id.tasks_menu) {
-                        viewPager.setCurrentItem(0, false);
-                        return true;
-                    } else if (item.getItemId() == R.id.favorite_menu) {
-                        viewPager.setCurrentItem(1, false);
-                        return true;
-                    } else if (item.getItemId() == R.id.profile_menu) {
-                        viewPager.setCurrentItem(2, false);
-                        return true;
-                    } else if (item.getItemId() == R.id.setting_menu) {
-                        viewPager.setCurrentItem(3, false);
-                        return true;
-                    }
-                    return false;
-                }
-            });
-
-
-        }catch (Exception e){
-            Log.i("LOG_MSG", "binding" + e.getMessage());
-        }
-
+        MenuListener();
+        HomeActivityAlive = true;
 //        WebSocketViewModel viewModel = new ViewModelProvider(this).get(WebSocketViewModel.class);
 //        viewModel.connectWebSocket("ws://10.234.232.193:8000/ws/job_and_member/");
-
         try{
             connectWebSocket();
 //            getJobUpdate(sharedPrefManager.getTokenId());
         }catch (Exception e){
             Log.i("LOG_MSG", "Exception" + e.getMessage());
         }
-
     }
-
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {
-            super.onBackPressed();
+//            super.onBackPressed();
         } else {
             viewPager.setCurrentItem(viewPager.getCurrentItem() - 1);
         }
     }
-
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i("LOG_MSG", "HomeActivity was onStart");
+    }
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("LOG_MSG", "onStop");
+        HomeActivityAlive = false;
+        Log.i("LOG_MSG", "HomeActivity was onStop");
     }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        HomeActivityAlive = false;
         Log.i("LOG_MSG", "HomeActivity was destroy");
     }
 
@@ -264,7 +254,8 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 String plant = JobList.getString("plant");
                 String line = JobList.getString("line");
                 String machine = JobList.getString("machine");
-                String equipId = JobList.getString("equipId");
+                String equipCode = JobList.getString("equipCode");
+                String equipType = JobList.getString("equipType");
                 String name = JobList.getString("name");
                 String description = JobList.getString("description");
                 String typeof = JobList.getString("typeof");
@@ -273,7 +264,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 String responder_member = JobList.getString("responder_member").toLowerCase();
 
                 JobTaskParameter job = new JobTaskParameter(id, plant, line, machine,
-                        equipId, name, description, typeof,
+                        equipCode, equipType, name, description, typeof,
                         responder_member, start_date, ended_date);
 
                 if(ended_date.equals("-")){
@@ -283,7 +274,9 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             Stored_MyTasks.add(id);
                             MyJobContainers.add(job);
                             EntireJobContainers.add(job);
-                            createNotification(EntireJobContainers.get(i));
+                            if(!HomeActivityAlive){
+                                createNotification(EntireJobContainers.get(i));
+                            }
                         }
                     }
                     else{
@@ -292,7 +285,9 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             Stored_AllTasks.add(id);
                             AllJobContainers.add(job);
                             EntireJobContainers.add(job);
-                            createNotification(EntireJobContainers.get(i));
+                            if(!HomeActivityAlive){
+                                createNotification(EntireJobContainers.get(i));
+                            }
                         }
                     }
                 }else{  EntireJobContainers.add(job); }
@@ -337,13 +332,77 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             AllTaskAdapter.setOnItemClickListener(new TaskCardAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(int position) {
-                    // Handle the item click here, for example:
                     JobTaskParameter clickedTask = AllJobContainers.get(position);
-                    Toast.makeText(getApplicationContext(), clickedTask.getMachine(), Toast.LENGTH_SHORT).show();
+                    SharedPreferencesMachine sharedPreferencesMachine = new SharedPreferencesMachine(getApplicationContext());
+                    sharedPreferencesMachine.saveMachineData(
+                            clickedTask.getId(),
+                            clickedTask.getPlant(),
+                            clickedTask.getLine(),
+                            clickedTask.getMachine(),
+                            clickedTask.getEquipId(),
+                            clickedTask.getEquipType(),
+                            clickedTask.getJob(),
+                            clickedTask.getDescription(),
+                            clickedTask.getTypeOf(),
+                            clickedTask.getStartDate(),
+                            clickedTask.getEndDate()
+                            );
 
-                    Intent intent = new Intent(HomeActivity.this, MachineActivity.class);
-                    startActivity(intent);
-                    // Do something with the clicked task
+
+                    taskConfirm_dialog = new Dialog(HomeActivity.this);
+                    taskConfirm_dialog.setContentView(R.layout.dialog_confirm_task);
+                    taskConfirm_dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    taskConfirm_dialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(HomeActivity.this, R.drawable.dialog_background_corner_top));
+                    taskConfirm_dialog.getWindow().setGravity(Gravity.BOTTOM);
+                    taskConfirm_dialog.setCancelable(false);
+                    taskConfirm_dialog.show();
+
+                    try{
+                        Intent intentMachineActivity = new Intent(HomeActivity.this, MachineActivity.class);
+                        Button btnConfirmJob = taskConfirm_dialog.findViewById(R.id.btnConfirmJob);
+                        Button btnCancelJob = taskConfirm_dialog.findViewById(R.id.btnCancelJob);
+                        TextView txtMachineNameOfConfirm = taskConfirm_dialog.findViewById(R.id.txtMachineNameOfConfirm);
+                        txtMachineNameOfConfirm.setText(clickedTask.getMachine());
+                        btnConfirmJob.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                PostPersonToJobFunc(String.valueOf(clickedTask.getId()), String.valueOf(sharedPrefManager.getUserId()));
+                                Toast.makeText(getApplicationContext(), "Job Id: " + clickedTask.getId() + "\nUser Id: " + sharedPrefManager.getUserId(), Toast.LENGTH_SHORT).show();
+                                startActivity(intentMachineActivity);
+                            }
+                        });
+                        btnCancelJob.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                taskConfirm_dialog.dismiss();
+                            }
+                        });
+                    }catch (Exception e){
+                        Log.i("LOG_MSG", "taskConfirm_dialog " + e.getMessage());
+                    }
+
+                }
+            });
+            MyTaskAdapter.setOnItemClickListener(new TaskCardAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(int position) {
+                    JobTaskParameter clickedTask = MyJobContainers.get(position);
+                    SharedPreferencesMachine sharedPreferencesMachine = new SharedPreferencesMachine(getApplicationContext());
+                    sharedPreferencesMachine.saveMachineData(
+                            clickedTask.getId(),
+                            clickedTask.getPlant(),
+                            clickedTask.getLine(),
+                            clickedTask.getMachine(),
+                            clickedTask.getEquipId(),
+                            clickedTask.getEquipType(),
+                            clickedTask.getJob(),
+                            clickedTask.getDescription(),
+                            clickedTask.getTypeOf(),
+                            clickedTask.getStartDate(),
+                            clickedTask.getEndDate()
+                    );
+                    Intent intentMachineActivity = new Intent(HomeActivity.this, MachineActivity.class);
+                    startActivity(intentMachineActivity);
                 }
             });
 
@@ -353,14 +412,31 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             recyclerView_allJob.setAdapter(AllTaskAdapter);
             recyclerView_myJob.setAdapter(MyTaskAdapter);
 
-//            AllTaskAdapter.updateAdapter(AllJobContainers);
-
         }
         catch (Exception ex){
             Log.i("LOG_MSG", "StoreJobArray " + ex.getMessage());
         }
     }
+    private void PostPersonToJobFunc(String jobId, String userId){
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API's base URL
+                .addConverterFactory(GsonConverterFactory.create()) // Use Gson for JSON parsing
+                .build();
 
+        ApiService apiService = retrofit.create(ApiService.class);
+        RequestBodyPersonToJob requestBodyPersonToJob = new RequestBodyPersonToJob(jobId, userId);
+        apiService.postPersonToJob(requestBodyPersonToJob).enqueue(new Callback<CommonRes>() {
+            @Override
+            public void onResponse(Call<CommonRes> call, Response<CommonRes> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Assigned successful", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<CommonRes> call, Throwable t) {
+            }
+        });
+    }
     private void NotificationPermission(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
             if(ContextCompat.checkSelfPermission(HomeActivity.this, Manifest.permission.POST_NOTIFICATIONS) !=
@@ -482,6 +558,66 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
             Log.i("LOG_MSG", "GetJobTask: " + e.toString());
         }
+    }
+    public void MenuListener(){
+        try{
+            viewPager = findViewById(R.id.frame_home);
+            ViewPagerAdapter ViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+            viewPager.setAdapter(ViewPagerAdapter);
+            viewPager.setOffscreenPageLimit(3);
+
+            bottomNavigationView = findViewById(R.id.btnNavigationView);
+            bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                    if (item.getItemId() == R.id.tasks_menu) {
+                        viewPager.setCurrentItem(0, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.favorite_menu) {
+                        viewPager.setCurrentItem(1, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.profile_menu) {
+                        viewPager.setCurrentItem(2, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.setting_menu) {
+                        viewPager.setCurrentItem(3, false);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+            viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+                @Override
+                public void onPageSelected(int position) {
+                    switch (position) {
+                        case 0:
+                            bottomNavigationView.setSelectedItemId(R.id.tasks_menu);
+                            break;
+                        case 1:
+                            bottomNavigationView.setSelectedItemId(R.id.favorite_menu);
+                            break;
+                        case 2:
+                            bottomNavigationView.setSelectedItemId(R.id.profile_menu);
+                            break;
+                        case 3:
+                            bottomNavigationView.setSelectedItemId(R.id.setting_menu);
+                            break;
+                    }
+                }
+                @Override
+                public void onPageScrollStateChanged(int state) {
+                }
+            });
+
+        }catch (Exception e){
+            Log.i("LOG_MSG", "binding" + e.getMessage());
+        }
+
     }
     public class ProgressBarAnimation extends Animation {
         private ProgressBar progressBar;
