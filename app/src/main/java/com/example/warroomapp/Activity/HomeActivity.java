@@ -219,7 +219,6 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
                         progress.setVisibility(View.VISIBLE);
                         progress.startAnimation(anim);
                         Log.i("LOG_MSG", "message :\n" + message);
@@ -256,6 +255,8 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 String machine = JobList.getString("machine");
                 String equipCode = JobList.getString("equipCode");
                 String equipType = JobList.getString("equipType");
+                String cameraIp1 = JobList.getString("cameraIp1");
+                String cameraIp2 = JobList.getString("cameraIp2");
                 String name = JobList.getString("name");
                 String description = JobList.getString("description");
                 String typeof = JobList.getString("typeof");
@@ -264,7 +265,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 String responder_member = JobList.getString("responder_member").toLowerCase();
 
                 JobTaskParameter job = new JobTaskParameter(id, plant, line, machine,
-                        equipCode, equipType, name, description, typeof,
+                        equipCode, equipType, cameraIp1, cameraIp2, name, description, typeof,
                         responder_member, start_date, ended_date);
 
                 if(ended_date.equals("-")){
@@ -279,7 +280,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             }
                         }
                     }
-                    else{
+                    else if(responder_member.equals("non-assigned")){
                         Current_AllTasks.add(id);
                         if(!Stored_AllTasks.contains(id)){
                             Stored_AllTasks.add(id);
@@ -341,6 +342,8 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             clickedTask.getMachine(),
                             clickedTask.getEquipId(),
                             clickedTask.getEquipType(),
+                            clickedTask.getCameraIp1(),
+                            clickedTask.getCameraIp2(),
                             clickedTask.getJob(),
                             clickedTask.getDescription(),
                             clickedTask.getTypeOf(),
@@ -359,15 +362,19 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
 
                     try{
                         Intent intentMachineActivity = new Intent(HomeActivity.this, MachineActivity.class);
+
                         Button btnConfirmJob = taskConfirm_dialog.findViewById(R.id.btnConfirmJob);
                         Button btnCancelJob = taskConfirm_dialog.findViewById(R.id.btnCancelJob);
+
                         TextView txtMachineNameOfConfirm = taskConfirm_dialog.findViewById(R.id.txtMachineNameOfConfirm);
                         txtMachineNameOfConfirm.setText(clickedTask.getMachine());
+
                         btnConfirmJob.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 PostPersonToJobFunc(String.valueOf(clickedTask.getId()), String.valueOf(sharedPrefManager.getUserId()));
                                 Toast.makeText(getApplicationContext(), "Job Id: " + clickedTask.getId() + "\nUser Id: " + sharedPrefManager.getUserId(), Toast.LENGTH_SHORT).show();
+                                taskConfirm_dialog.dismiss();
                                 startActivity(intentMachineActivity);
                             }
                         });
@@ -395,6 +402,8 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             clickedTask.getMachine(),
                             clickedTask.getEquipId(),
                             clickedTask.getEquipType(),
+                            clickedTask.getCameraIp1(),
+                            clickedTask.getCameraIp2(),
                             clickedTask.getJob(),
                             clickedTask.getDescription(),
                             clickedTask.getTypeOf(),
@@ -564,7 +573,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             viewPager = findViewById(R.id.frame_home);
             ViewPagerAdapter ViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
             viewPager.setAdapter(ViewPagerAdapter);
-            viewPager.setOffscreenPageLimit(3);
+            viewPager.setOffscreenPageLimit(4);
 
             bottomNavigationView = findViewById(R.id.btnNavigationView);
             bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
@@ -577,11 +586,14 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                     } else if (item.getItemId() == R.id.favorite_menu) {
                         viewPager.setCurrentItem(1, false);
                         return true;
-                    } else if (item.getItemId() == R.id.profile_menu) {
+                    } else if (item.getItemId() == R.id.chat_menu) {
                         viewPager.setCurrentItem(2, false);
                         return true;
-                    } else if (item.getItemId() == R.id.setting_menu) {
+                    } else if (item.getItemId() == R.id.profile_menu) {
                         viewPager.setCurrentItem(3, false);
+                        return true;
+                    } else if (item.getItemId() == R.id.setting_menu) {
+                        viewPager.setCurrentItem(4, false);
                         return true;
                     }
                     return false;
@@ -602,9 +614,12 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                             bottomNavigationView.setSelectedItemId(R.id.favorite_menu);
                             break;
                         case 2:
-                            bottomNavigationView.setSelectedItemId(R.id.profile_menu);
+                            bottomNavigationView.setSelectedItemId(R.id.chat_menu);
                             break;
                         case 3:
+                            bottomNavigationView.setSelectedItemId(R.id.profile_menu);
+                            break;
+                        case 4:
                             bottomNavigationView.setSelectedItemId(R.id.setting_menu);
                             break;
                     }

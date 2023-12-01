@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import java.util.ArrayList;
 
 public class SharedPreferencesManager {
-    private static final String KEY_API_URL = "api_url";
     private static final String PREF_NAME = "MyAppPrefs";
 
     // Keys for user data
@@ -41,16 +40,9 @@ public class SharedPreferencesManager {
         editor.putString(KEY_IMAGE, image);
         editor.apply();
     }
-    public void saveApiUrl(String ApiUrl){
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(KEY_API_URL, ApiUrl);
-        editor.apply();
-    }
+
     // Methods to retrieve user data
 
-    public String getApiUrl(){
-        return preferences.getString(KEY_API_URL, "");
-    }
     public String getTokenId() {
         return preferences.getString(KEY_TOKEN_ID, "");
     }

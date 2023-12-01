@@ -34,7 +34,14 @@ android {
 }
 
 dependencies {
+    //Streaming CCTV via StreamHttpResponse
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1");
+    implementation("androidx.media3:media3-exoplayer:1.1.1");
+    implementation("androidx.media3:media3-ui:1.1.1");
+    implementation("androidx.media3:media3-exoplayer-dash:1.1.1");
+    //Load LottieJson Animation file
     implementation("com.airbnb.android:lottie:6.1.0");
+    //WebSocket
     implementation("org.java-websocket:Java-WebSocket:1.5.4");
     implementation("com.squareup.picasso:picasso:2.8");
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

@@ -5,25 +5,39 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Fragment.FavoriteFragment">
+    <LinearLayout
+        android:id="@+id/signup_panel_middle2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="70dp">
 
-    <!-- TODO: Update blank fragment layout -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/success_animation"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:elevation="5dp"
+            android:textAlignment="center"
+            android:visibility="visible"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="under_development_animation.json"
+            app:lottie_loop="true" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="50dp"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:src="@drawable/baseline_mood_bad_24" />
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_gravity="center"
-        android:textAlignment="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Under developing ...\n(Favorite page)"
-        android:textSize="20dp"
-        android:textColor="@color/txtColor1"/>
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/success_animation"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="Under development \n..."
+            android:textAlignment="center"
+            android:textColor="@color/txtColor1"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+
 
 </FrameLayout>

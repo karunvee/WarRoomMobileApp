@@ -24,11 +24,6 @@ public class TaskCardAdapter extends RecyclerView.Adapter<TaskCardAdapter.ViewHo
         this.jobContainers = jobContainers;
     }
 
-    public void updateAdapter(ArrayList<JobTaskParameter> updatedJobContainers) {
-        this.jobContainers.clear();
-        this.jobContainers.addAll(updatedJobContainers);
-        this.notifyDataSetChanged(); // Notify the adapter of data changes
-    }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_item, parent, false);

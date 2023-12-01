@@ -50,7 +50,6 @@ public class SettingFragment extends Fragment {
         url_dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         url_dialog.getWindow().setBackgroundDrawable(ContextCompat.getDrawable(getContext(),R.drawable.dialog_background));
         url_dialog.setCancelable(false);
-
     }
 
     @Override

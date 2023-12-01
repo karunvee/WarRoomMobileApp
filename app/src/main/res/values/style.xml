@@ -41,4 +41,12 @@
         <item name="android:foreground">#00FFFFFF</item>
 <!--        <item name="android:colorForeground">#00FFFFFF</item>-->
     </style>
+
+    <style name="MyTabLayoutStyle" parent="Widget.Design.TabLayout">
+        <item name="tabTextAppearance">@style/MyTabTextAppearance</item>
+    </style>
+
+    <style name="MyTabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:textColor">@color/btnSummit</item>
+    </style>
 </resources>

@@ -22,6 +22,7 @@ import android.widget.Toast;
 //import com.example.warroomapp.Activity.User;
 import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.R;
+import com.example.warroomapp.SharedPreferencesManager;
 import com.example.warroomapp.SharedPreferencesSetting;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
@@ -29,13 +30,7 @@ import com.squareup.picasso.Picasso;
 public class ProfileFragment extends Fragment {
     private static GlobalVariable globalVariable = new GlobalVariable();
     private SharedPreferencesSetting sharedPrefSetting;
-    private String token = "";
-    private Integer id = 0;
-    private String username = "";
-    private String name = "";
-    private String emp_no = "";
-    private String description = "";
-    private String image = "";
+    private SharedPreferencesManager sharedPrefManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,34 +44,21 @@ public class ProfileFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         sharedPrefSetting = new SharedPreferencesSetting(getContext());
+        sharedPrefManager = new SharedPreferencesManager(getContext());
         ImageView imageView = view.findViewById(R.id.profile_image); // Replace with your ImageView ID
         TextView txtProfileName = view.findViewById(R.id.txtProfileName);
         TextView txtProfileDetail = view.findViewById(R.id.txtProfileDetail);
 
-        Bundle args = getArguments();
-        if (args != null) {
-            token = args.getString("token");
-            id = args.getInt("id");
-            username = args.getString("username");
-            name = args.getString("name");
-            emp_no = args.getString("emp_no");
-            description = args.getString("description");
-            image = args.getString("image");
-            Log.i("LOG_MSG", "Image : " + image);
-            txtProfileName.setText(name);
-            txtProfileDetail.setText((emp_no + " " + description));
-//            Toast.makeText(getActivity().getApplicationContext(), Image, Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Intent intent = new Intent(getActivity().getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-            getActivity().finish();
-        }
-        Log.i("LOG_MSG", "Image : " + globalVariable.api_url + sharedPrefSetting.getApiUrl() + image);
-        String imageUrl = globalVariable.api_url + sharedPrefSetting.getApiUrl() + image; // Replace with your image URL
 
-        if (image.trim().isEmpty() || image == null ){
-            imageUrl += "/media/images/person_1.jpg";
+        txtProfileName.setText(sharedPrefManager.getName());
+        txtProfileDetail.setText((sharedPrefManager.getEmpNo() + " " + sharedPrefManager.getDescription()));
+        String imageURL = sharedPrefManager.getImage();
+
+        Log.i("LOG_MSG", "Image : " + globalVariable.api_url + sharedPrefSetting.getApiUrl() + imageURL);
+        String imageUrl = globalVariable.api_url + sharedPrefSetting.getApiUrl() + imageURL; // Replace with your image URL
+
+        if (imageURL.trim().isEmpty() || imageURL == null ){
+            imageUrl += "/static/img/person_1.jpg";
         }
 
         // Load the image from the URL using Picasso
@@ -98,9 +80,6 @@ public class ProfileFragment extends Fragment {
                         e.printStackTrace();
                     }
                 });
-
-
-
         return view;
     }
 

@@ -7,14 +7,10 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".Activity.HomeActivity">
+
     <FrameLayout
-        android:id="@+id/frame_home"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnNavigationView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
         <ProgressBar
             android:id="@+id/progressBar"
             style="@android:style/Widget.ProgressBar.Horizontal"
@@ -25,8 +21,23 @@
             android:elevation="20dp"
             android:visibility="visible"
             android:progressDrawable="@drawable/progress_bar_background"/>
-
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/frame_home"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="56dp"/>
     </FrameLayout>
+
+<!--    <FrameLayout-->
+<!--        android:id="@+id/frame_home"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/btnNavigationView"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+<!--    </FrameLayout>-->
+
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/btnNavigationView"
@@ -44,6 +55,8 @@
         app:itemTextAppearanceInactive="@style/CustomBottomNavigationTitleStyle"
         app:menu="@menu/button_nav_menu"
         />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

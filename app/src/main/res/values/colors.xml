@@ -9,11 +9,17 @@
     <color name="boxColor1">#FFE1B4</color>
     <color name="boxColor2">#C1DEFF</color>
     <color name="boxColor3">#8DB0D6</color>
+    <color name="boxColor3Transparent">#D8C1DEFF</color>
+    <color name="boxColorGreen">#59CD79</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FE6161</color>
     <color name="green">#55b570</color>
+
+    <color name="transparent">@android:color/transparent</color>
+<!--    <color name="transparent">@android:color/transparent</color>-->
+
 
     <color name="txtColor0">#1258b0</color>
     <color name="txtColor1">#5E5E5E</color>
