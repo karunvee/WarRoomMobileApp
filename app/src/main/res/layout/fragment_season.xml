@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/rounded_button_transparent"
+        android:background="@drawable/rounded_button_summit_tran"
         android:fontFamily="@font/poppins_regular"
         android:text="Add New Reason"
         android:textAlignment="center"

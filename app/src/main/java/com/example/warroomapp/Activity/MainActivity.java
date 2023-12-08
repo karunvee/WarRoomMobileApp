@@ -30,13 +30,12 @@ public class MainActivity extends AppCompatActivity {
     private static GlobalVariable globalVariable = new GlobalVariable();
     Intent mServiceIntent;
     private NotificationService notificationService;
-    private interface ApiService{
+    public interface ApiService{
         @GET("/user_info/{userId}/")
         Call<UserInfoRes> getUserInfo(@Path("userId") int userId);
     }
     private SharedPreferencesManager sharedPrefManager;
     private SharedPreferencesSetting sharedPrefSetting;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Toast.makeText(getApplicationContext(), sharedPrefManager.getTokenId() + " @ " + sharedPrefManager.getUserId(), Toast.LENGTH_SHORT).show();
-        int delayMillis = 500; // Adjust this value as needed
+        int delayMillis = 2500; // Adjust this value as needed
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -69,18 +68,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void getUserInfoToUpdate(String tokenId, int userId){
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new AuthInterceptor(tokenId))
-                .build();
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API base URL
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-
-        ApiService apiService = retrofit.create(ApiService.class);
         try{
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .addInterceptor(new AuthInterceptor(tokenId))
+                    .build();
+
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API base URL
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+
+            ApiService apiService = retrofit.create(ApiService.class);
             Call<UserInfoRes> call = apiService.getUserInfo(userId);
 
             call.enqueue(new Callback<UserInfoRes>() {
@@ -101,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
                                 apiResponse.getUser().getRemark(),
                                 apiResponse.getUser().isUser(),
                                 apiResponse.getUser().isStaff(),
-                                apiResponse.getUser().getImage()
+                                apiResponse.getUser().getImage(),
+                                apiResponse.getUser().getSkillPoint(),
+                                apiResponse.getUser().getActionPeriod(),
+                                apiResponse.getUser().getMachineQty()
                         );
                         Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                         startActivity(intent);
@@ -117,13 +119,13 @@ public class MainActivity extends AppCompatActivity {
                 public void onFailure(Call<UserInfoRes> call, Throwable t) {
                     // Handle network or other errors
                     Toast.makeText(getApplicationContext(), "Network error: " + t.toString(), Toast.LENGTH_SHORT).show();
-                    Log.i("LOG_MSG", "Network error: " + t.toString());
+                    Log.i("LOG_MSG", "Network error: " + t.getMessage());
                 }
             });
         }
         catch (Exception e){
             Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
-            Log.i("LOG_MSG", "getUserInfo: " + e.toString());
+            Log.i("LOG_MSG", "getUserInfo: " + e.getMessage());
         }
 
     }

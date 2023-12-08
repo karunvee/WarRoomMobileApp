@@ -21,10 +21,10 @@ import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.warroomapp.Activity.Class.ReasonSolutionRes;
-import com.example.warroomapp.Activity.HomeActivity;
 import com.example.warroomapp.Activity.ReasonSolutionParameter;
 import com.example.warroomapp.Adaptor.ReaSolAdapter;
 import com.example.warroomapp.GlobalVariable;
+import com.example.warroomapp.MainApp;
 import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesMachine;
 import com.example.warroomapp.SharedPreferencesManager;
@@ -53,7 +53,6 @@ public class SolutionFragment extends Fragment {
         sharedPrefManager = new SharedPreferencesManager(getContext());
         sharedPrefSetting = new SharedPreferencesSetting(getContext());
         sharedPreferencesMachine = new SharedPreferencesMachine(getContext());
-
     }
 
     @Override
@@ -94,7 +93,7 @@ public class SolutionFragment extends Fragment {
                                     sharedPreferencesMachine.getName().toString() ,
                                     txtSolutionCodeEN.getText().toString(),
                                     txtSolutionCodeTH.getText().toString(),
-                                    sharedPrefManager.getEmpNo()
+                                    sharedPrefManager.getEmpNo() + " " + sharedPrefManager.getUsername()
                             );
                             LottieAnimationView animationView = addSolution_dialog.findViewById(R.id.status_animation);
                             MachineActionFragment.postReasonSolutionFunc("solution", sharedPrefManager.getTokenId(), requestBodyReasonCode, new MachineActionFragment.PostReasonSolutionCallback() {
@@ -147,7 +146,8 @@ public class SolutionFragment extends Fragment {
                     @Override
                     public void onItemClick(int position) {
                         ReasonSolutionParameter clickedSolution = SolutionContainers.get(position);
-//                        Toast.makeText(getContext(), clickedReason.getEn_description(), Toast.LENGTH_SHORT).show();
+                        ((MainApp)getContext().getApplicationContext()).setPk_solutionCode(clickedSolution.getId());
+                        Log.i("LOG_MSG", "onItemClick Solution >> pk " + clickedSolution.getId());
                     }
                 });
                 SolutionAdapter.setOnLongClickListener(new ReaSolAdapter.OnLongClickListener() {
@@ -186,7 +186,6 @@ public class SolutionFragment extends Fragment {
                             txtRating.setText(clickedSolution.getRating());
                             txtDesEN.setText(clickedSolution.getEn_description());
                             txtDesTH.setText(clickedSolution.getTh_description());
-
 
                             btnCancelSolutionInfo.setOnClickListener(new View.OnClickListener() {
                                 @Override

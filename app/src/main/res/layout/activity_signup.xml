@@ -11,7 +11,7 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/success_animation"
-        android:layout_width="400px"
+        android:layout_width="300px"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,11 +35,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true">
-            <ImageView
-                android:id="@+id/signup_imageView2"
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_signup_imageView2"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                app:srcCompat="@drawable/delta_logo2" />
+                app:cardCornerRadius="15dp"
+                android:elevation="10dp">
+                <ImageView
+                    android:id="@+id/signup_imageView2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:srcCompat="@drawable/delta_logo2" />
+            </androidx.cardview.widget.CardView>
+
 
             <TextView
                 android:id="@+id/signup_textView2"
@@ -61,7 +70,7 @@
                 android:layout_width="126dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
-                android:layout_toEndOf="@+id/signup_imageView2"
+                android:layout_toEndOf="@+id/card_signup_imageView2"
                 android:fontFamily="@font/poppins_bold"
                 android:padding="0dp"
                 android:text="Sign Up"
@@ -241,5 +250,7 @@
         app:layout_constraintBottom_toTopOf="@+id/signup_imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,34 +1,33 @@
 package com.example.warroomapp.Fragment;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.media3.extractor.TrueHdSampleRechunker;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.warroomapp.Activity.AuthInterceptor;
 import com.example.warroomapp.Activity.Class.ReasonSolutionRes;
 import com.example.warroomapp.Activity.CommonRes;
-import com.example.warroomapp.Activity.LoginRes;
+import com.example.warroomapp.Activity.HomeActivity;
+import com.example.warroomapp.Activity.MachineActivity;
 import com.example.warroomapp.Activity.PagerAdapter;
 import com.example.warroomapp.GlobalVariable;
+import com.example.warroomapp.MainApp;
 import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesMachine;
 import com.example.warroomapp.SharedPreferencesManager;
 import com.example.warroomapp.SharedPreferencesSetting;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -61,6 +60,25 @@ public class MachineActionFragment extends Fragment {
             this.update_emp = update_emp;
         }
     }
+    public static class RequestBodySummitCode{
+        @SerializedName("error_code")
+        private String error_code;
+        @SerializedName("equip_type")
+        private String equip_type;
+        @SerializedName("pk_reason_code")
+        private String pk_reason_code;
+        @SerializedName("pk_solution_code")
+        private String pk_solution_code;
+        @SerializedName("jid")
+        private String jobId;
+        public RequestBodySummitCode(String error_code, String equip_type, String pk_reason_code, String pk_solution_code, String jobId){
+            this.error_code = error_code;
+            this.equip_type = equip_type;
+            this.pk_reason_code = pk_reason_code;
+            this.pk_solution_code = pk_solution_code;
+            this.jobId = jobId;
+        }
+    }
     private interface ApiService{
         @POST("/post_reason_code/")
         Call<CommonRes> postReasonCode (
@@ -81,6 +99,11 @@ public class MachineActionFragment extends Fragment {
                 @Query("equipment_type") String equipmentType,
                 @Query("error_code") String errorCode
         );
+
+        @POST("/summit_reason_solution/")
+        Call<CommonRes> postSummitCode (
+                @Body RequestBodySummitCode requestBodySummitCode
+        );
     }
     private static GlobalVariable globalVariable = new GlobalVariable();
     private SharedPreferencesManager sharedPrefManager;
@@ -96,8 +119,10 @@ public class MachineActionFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_machine_action, container, false);
 
+        sharedPrefManager = new SharedPreferencesManager(getActivity().getApplicationContext());
         sharedPrefSetting = new SharedPreferencesSetting(getActivity().getApplicationContext());
         sharedPreferencesMachine = new SharedPreferencesMachine(getActivity().getApplicationContext());
+
         TextView txtErrorCode = view.findViewById(R.id.txtErrorCode);
         TextView txtErrorDescription = view.findViewById(R.id.txtErrorDescription);
         TextView txtIssueDate = view.findViewById(R.id.txtIssueDate);
@@ -106,6 +131,7 @@ public class MachineActionFragment extends Fragment {
         txtErrorCode.setText(sharedPreferencesMachine.getName());
         txtErrorDescription.setText(sharedPreferencesMachine.getDescription());
 
+        Button btnSummitJob = view.findViewById(R.id.btnSummitJob);
         TabLayout tabLayout = view.findViewById(R.id.reason_solution_tab);
         ViewPager viewPager = view.findViewById(R.id.reason_solution_pager);
         PagerAdapter adapter = new PagerAdapter(getChildFragmentManager());
@@ -115,9 +141,80 @@ public class MachineActionFragment extends Fragment {
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
+        ((MainApp)getContext().getApplicationContext()).setPk_reasonCode(0);
+        ((MainApp)getContext().getApplicationContext()).setPk_solutionCode(0);
+        btnSummitJob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try{
+                    Integer reasonCode = ((MainApp)getContext().getApplicationContext()).getPk_reasonCode();
+                    Integer solutionCode = ((MainApp)getContext().getApplicationContext()).getPk_solutionCode();
+
+                    Log.i("LOG_MSG", "getPkReasonCode Id: " + reasonCode +
+                            "\ngetPkSolutionCode Id: " + solutionCode +
+                            "\nErrorCode pk: " + sharedPreferencesMachine.getName()
+                    );
+
+                    if(reasonCode.equals(0) || solutionCode.equals(0)){
+                        Toast.makeText(getContext(), "Please select ReasonCode and SolutionCode!!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Integer jobId = sharedPreferencesMachine.getPk();
+                        RequestBodySummitCode requestBodySummitCode = new RequestBodySummitCode(
+                                sharedPreferencesMachine.getName(),
+                                sharedPreferencesMachine.getEquipType(),
+                                reasonCode.toString(), solutionCode.toString(),
+                                jobId.toString()
+                        );
+                        postSummitCodeFunc(sharedPrefManager.getTokenId(), requestBodySummitCode);
+
+                        Intent intentMachineActivity = new Intent(getActivity(), HomeActivity.class);
+                        startActivity(intentMachineActivity);
+                        getActivity().finish();
+                    }
+                }
+                catch (Exception ex){
+                    Log.i("LOG_MSG", "btnSummitJob: " + ex.getMessage());
+                }
+            }
+        });
+
         return view;
     }
 
+    private void postSummitCodeFunc(String tokenId, RequestBodySummitCode requestBodySummitCode){
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new AuthInterceptor(tokenId))
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API base URL
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+        ApiService apiService = retrofit.create(ApiService.class);
+        Call<CommonRes> call = apiService.postSummitCode(requestBodySummitCode);
+        try {
+            call.enqueue(new Callback<CommonRes>() {
+                @Override
+                public void onResponse(Call<CommonRes> call, Response<CommonRes> response) {
+                    if (response.isSuccessful()) {
+                        String res = response.body().getDetail().toString();
+                        Toast.makeText(getContext(), res, Toast.LENGTH_SHORT).show();
+                    }else {
+                        Toast.makeText(getContext(), "Failed to add ReasonCode. HTTP Code: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                @Override
+                public void onFailure(Call<CommonRes> call, Throwable t) {
+                    Toast.makeText(getContext(), "Failed to add ReasonCode. Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        catch (Exception ex){
+            Log.i("LOG_MSG", "postReasonCode: " + ex.getMessage());
+        }
+    }
     public interface PostReasonSolutionCallback {
         void onSuccess(String response);
 

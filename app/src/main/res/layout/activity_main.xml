@@ -7,11 +7,26 @@
     android:background="@color/white"
     tools:context=".Activity.MainActivity">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/success_animation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:elevation="5dp"
+        android:textAlignment="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/imageView4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="rocket_paper_loading_animation.json"
+        app:lottie_loop="true" />
+
     <ImageView
         android:id="@+id/imageView4"
         android:layout_width="238dp"
         android:layout_height="81dp"
-        android:layout_marginTop="308dp"
+        android:layout_marginTop="356dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,9 +37,9 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="320dp"
-        android:textColor="@color/txtColor2"
+        android:layout_marginBottom="268dp"
         android:text="Smarter. Greener. Together."
+        android:textColor="@color/txtColor2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

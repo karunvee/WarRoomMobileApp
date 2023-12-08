@@ -110,12 +110,25 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             this.uid = uid;
         }
     }
+    public class RequestBodyUserStatus{
+        @SerializedName("id")
+        private String uid;
+        @SerializedName("status")
+        private String status;
+        public RequestBodyUserStatus(String uid, String status){
+            this.uid = uid;
+            this.status = status;
+        }
+    }
     private interface ApiService{
         @GET("/job_update/")
         Call<CommonRes> getJobUpdate();
 
         @POST("/UpdatePICtoJob/")
         Call<CommonRes> postPersonToJob (@Body RequestBodyPersonToJob requestBodyPersonToJob);
+
+        @POST("/user_update_status/")
+        Call<CommonRes> postUserStatus (@Body RequestBodyUserStatus requestBodyUserStatus);
     }
     private RecyclerView recyclerView_allJob;
     private RecyclerView recyclerView_myJob;
@@ -180,20 +193,29 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
         }
     }
     @Override
+    protected void onResume(){
+        super.onResume();
+        postUserStatus(sharedPrefManager.getTokenId(), "Online");
+        Log.i("LOG_MSG", "HomeActivity was onResume");
+    }
+    @Override
     protected void onStart() {
         super.onStart();
+        postUserStatus(sharedPrefManager.getTokenId(), "Online");
         Log.i("LOG_MSG", "HomeActivity was onStart");
     }
     @Override
     protected void onStop() {
         super.onStop();
         HomeActivityAlive = false;
+        postUserStatus(sharedPrefManager.getTokenId(), "Idle");
         Log.i("LOG_MSG", "HomeActivity was onStop");
     }
     @Override
     protected void onDestroy() {
         super.onDestroy();
         HomeActivityAlive = false;
+        postUserStatus(sharedPrefManager.getTokenId(), "Offline");
         Log.i("LOG_MSG", "HomeActivity was destroy");
     }
 
@@ -525,6 +547,46 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
         fragmentTransaction.commit();
 
         previous_fragmentId = Id;
+    }
+
+    public void postUserStatus(String tokenId, String Status){
+        Integer uid = sharedPrefManager.getUserId();
+        RequestBodyUserStatus requestBodyUserStatus = new RequestBodyUserStatus(
+                uid.toString(),
+                Status
+        );
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new AuthInterceptor(tokenId))
+                .build();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(globalVariable.api_url + sharedPrefSetting.getApiUrl()) // Replace with your API base URL
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+        ApiService apiService = retrofit.create(ApiService.class);
+        try{
+            Call<CommonRes> call = apiService.postUserStatus(requestBodyUserStatus);
+
+            call.enqueue((new Callback<CommonRes>() {
+                @Override
+                public void onResponse(Call<CommonRes> call, Response<CommonRes> response) {
+                    if (response.isSuccessful()) {
+                        Log.i("LOG_MSG", response.body().detail);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<CommonRes> call, Throwable t) {
+                    Log.i("LOG_MSG", "Updating user status: " + t.toString());
+                }
+            }));
+        }
+        catch (Exception e){
+            Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
+            Log.i("LOG_MSG", "GetJobTask: " + e.toString());
+        }
     }
     public void getJobUpdate(String tokenId){
         ProgressBarAnimation animChild = new ProgressBarAnimation(progress, 0, 20);

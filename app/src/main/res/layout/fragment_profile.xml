@@ -4,347 +4,265 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bodyColor2"
+    android:background="@drawable/profile_body"
     tools:context=".Fragment.ProfileFragment">
 
-
-    <RelativeLayout
-        android:id="@+id/layout_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bodyColor1"
-        android:elevation="5dp">
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp">
-
-            <ImageView
-                android:id="@+id/profile_image"
-                android:layout_width="200px"
-                android:layout_height="200px"
-                android:layout_marginRight="10dp"
-                tools:src="@tools:sample/avatars" />
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentBottom="true"
-                android:layout_toEndOf="@+id/profile_image"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/txtProfileName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="@font/poppins_bold"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="Robert IkonjonMaiDee"
-                    android:textColor="@color/txtColor0"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/txtProfileDetail"
-                    android:layout_marginTop="0dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtProfileName"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text="86111000  CNDC-D7 AE"
-                    android:textSize="12sp"
-                    android:textColor="@color/txtColor2"/>
-            </RelativeLayout>
-
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-    <ScrollView
-        android:layout_marginTop="120dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="false"
-        android:layout_alignParentBottom="false">
+        android:orientation="vertical">
 
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/layout_swipe_profile"
+            android:layout_width="match_parent"
+            android:layout_height="330dp"
+            android:background="@color/transparent">
+            <RelativeLayout
+                android:id="@+id/layout_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/transparent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:textAlignment="center"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="250px"
+                        android:layout_height="250px"
+                        tools:src="@tools:sample/avatars"
+                        />
+
+                    <TextView
+                        android:id="@+id/txtProfileName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Robert IkonjonMaiDee"
+                        android:textColor="@color/txtColorHighlight"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtProfileDetail"
+                        android:layout_marginTop="0dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txtProfileName"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="86111000  CNDC-D7 AE"
+                        android:textSize="12sp"
+                        android:textColor="@color/txtColor2"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:textAlignment="center"
+                        android:gravity="center">
+                        <androidx.cardview.widget.CardView
+                            android:layout_margin="10dp"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="15dp"
+                            app:cardBackgroundColor="@color/white">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="10dp">
+                                <LinearLayout
+                                    android:id="@+id/layoutSkillPoint"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:orientation="horizontal"
+                                    android:textAlignment="center"
+                                    android:gravity="center">
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:background="@drawable/baseline_star_solid_36_blue" />
+                                    <TextView
+                                        android:id="@+id/txtProfile_SkillPoint"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginLeft="5dp"
+                                        android:fontFamily="@font/poppins_medium"
+                                        android:gravity="center"
+                                        android:text="000"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/txtColor7"
+                                        android:textSize="16sp" />
+                                </LinearLayout>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/layoutSkillPoint"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Skill Point"
+                                    android:textAlignment="center"
+                                    android:gravity="center"
+                                    android:textColor="@color/txtColor3"
+                                    android:textSize="10sp" />
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView
+                            android:layout_margin="10dp"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="15dp"
+                            app:cardBackgroundColor="@color/white">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="10dp">
+                                <LinearLayout
+                                    android:id="@+id/layoutSkillPoint2"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:orientation="horizontal"
+                                    android:textAlignment="center"
+                                    android:gravity="center">
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:background="@drawable/baseline_timer_regular_36" />
+                                    <TextView
+                                        android:id="@+id/txtProfile_ActionPeriod"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginLeft="5dp"
+                                        android:fontFamily="@font/poppins_medium"
+                                        android:gravity="center"
+                                        android:text="000"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/txtColor7"
+                                        android:textSize="16sp" />
+                                </LinearLayout>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/layoutSkillPoint2"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Action Period"
+                                    android:textAlignment="center"
+                                    android:gravity="center"
+                                    android:textColor="@color/txtColor3"
+                                    android:textSize="10sp" />
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView
+                            android:layout_margin="10dp"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="15dp"
+                            app:cardBackgroundColor="@color/white">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="10dp">
+                                <LinearLayout
+                                    android:id="@+id/layoutSkillPoint3"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:orientation="horizontal"
+                                    android:textAlignment="center"
+                                    android:gravity="center">
+                                    <ImageView
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:background="@drawable/baseline_robotic_arm_blue" />
+                                    <TextView
+                                        android:id="@+id/txtProfile_MachineType"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginLeft="5dp"
+                                        android:fontFamily="@font/poppins_medium"
+                                        android:gravity="center"
+                                        android:text="000"
+                                        android:textAlignment="center"
+                                        android:textColor="@color/txtColor7"
+                                        android:textSize="16sp" />
+                                </LinearLayout>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@+id/layoutSkillPoint3"
+                                    android:fontFamily="@font/poppins_medium"
+                                    android:text="Machine Type"
+                                    android:textAlignment="center"
+                                    android:gravity="center"
+                                    android:textColor="@color/txtColor3"
+                                    android:textSize="10sp" />
+                            </RelativeLayout>
+
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+<!--        <com.sothree.slidinguppanel.SlidingUpPanelLayout-->
+<!--            xmlns:sothree="http://schemas.android.com/apk/res-auto"-->
+<!--            android:id="@+id/sliding_layout"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:gravity="bottom"-->
+<!--            sothree:umanoPanelHeight="68dp"-->
+<!--            sothree:umanoShadowHeight="4dp">-->
+<!--            -->
+<!--        </com.sothree.slidinguppanel.SlidingUpPanelLayout>-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <androidx.cardview.widget.CardView
-                android:layout_margin="10dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="0dp"
+            android:background="@color/bodyColor2">
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardElevation="3dp"
-                app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="@color/white">
-                <RelativeLayout
-                    android:padding="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                android:background="@color/bodyColor6"
+                android:elevation="5dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_toEndOf="@+id/profile_image_rating3"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:text="Proficient Skills"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/textView8"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_medium"
-                        android:text="Performance"
-                        android:textColor="@color/txtColor1"
-                        android:textSize="16sp" />
-                    <RelativeLayout
-                        android:id="@+id/layoutRating"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/textView8"
-                        android:background="@drawable/rating_box">
-                        <TextView
-                            android:id="@+id/textView9"
-                            android:paddingTop="5dp"
-                            android:paddingLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Rating"
-                            android:fontFamily="@font/poppins_medium"
-                            android:textSize="14sp"
-                            android:textColor="@color/white"/>
-
-                        <TextView
-                            android:id="@+id/txtProfileRating"
-                            android:layout_marginTop="8dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="00.0"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:textColor="@color/txtColor5"
-                            android:textSize="26sp" />
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:id="@+id/layoutTopic1"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/layoutRating">
-                        <RelativeLayout
-                            android:id="@+id/layoutIcon1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rating_box2"
-                            >
-                            <ImageView
-                                android:id="@+id/profile_image_rating1"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginBottom="10dp"
-                                android:background="@drawable/baseline_star_solid_36_blue" />
-                            <TextView
-                                android:id="@+id/txtProfileAvgSkillPoint"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="13dp"
-                                android:layout_marginLeft="0dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_toEndOf="@+id/profile_image_rating1"
-                                android:fontFamily="@font/poppins_medium"
-                                android:gravity="center"
-                                android:text="000"
-                                android:textAlignment="center"
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />
-                        </RelativeLayout>
-                        <TextView
-                            android:id="@+id/textView10"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginTop="13dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toEndOf="@+id/layoutIcon1"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Average Skill Point"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:textColor="@color/txtColor2"
-                            android:textSize="14sp" />
-
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:id="@+id/layoutTopic2"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/layoutTopic1">
-                        <RelativeLayout
-                            android:id="@+id/layoutIcon2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rating_box2"
-                            >
-
-                            <ImageView
-                                android:id="@+id/profile_image_rating2"
-                                android:layout_width="30dp"
-                                android:layout_height="30dp"
-                                android:layout_marginStart="10dp"
-                                android:layout_marginTop="10dp"
-                                android:layout_marginEnd="10dp"
-                                android:layout_marginBottom="10dp"
-                                android:background="@drawable/baseline_timer_regular_36" />
-
-                            <TextView
-                                android:id="@+id/txtProfileAvgActionPeriod"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="13dp"
-                                android:layout_marginLeft="0dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_toEndOf="@+id/profile_image_rating2"
-                                android:fontFamily="@font/poppins_medium"
-                                android:gravity="center"
-                                android:text="000"
-                                android:textAlignment="center"
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />
-                        </RelativeLayout>
-                        <TextView
-                            android:id="@+id/textView11"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginTop="13dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toEndOf="@+id/layoutIcon2"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Average Action Period"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:textColor="@color/txtColor2"
-                            android:textSize="14sp" />
-
-                    </RelativeLayout>
-                    <RelativeLayout
-                        android:id="@+id/layoutTopic3"
-                        android:layout_marginTop="15dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/layoutTopic2">
-                        <RelativeLayout
-                            android:id="@+id/layoutIcon3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/rating_box2"
-                            >
-
-                            <ImageView
-                                android:id="@+id/profile_image_rating3"
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:layout_marginStart="12dp"
-                                android:layout_marginTop="12dp"
-                                android:layout_marginEnd="12dp"
-                                android:layout_marginBottom="12dp"
-                                android:background="@drawable/baseline_robotic_arm_blue" />
-
-                            <TextView
-                                android:id="@+id/txtProfileMachineTotal"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_marginTop="13dp"
-                                android:layout_marginLeft="0dp"
-                                android:layout_marginRight="20dp"
-                                android:layout_toEndOf="@+id/profile_image_rating3"
-                                android:fontFamily="@font/poppins_medium"
-                                android:gravity="center"
-                                android:text="000"
-                                android:textAlignment="center"
-                                android:textColor="@color/white"
-                                android:textSize="16sp" />
-                        </RelativeLayout>
-                        <TextView
-                            android:id="@+id/textView12"
-                            android:layout_marginLeft="20dp"
-                            android:layout_marginTop="13dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toEndOf="@+id/layoutIcon3"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Machine total"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:textColor="@color/txtColor2"
-                            android:textSize="14sp" />
-
-                    </RelativeLayout>
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:layout_margin="10dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ProficientSkillsView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="3dp"
-                app:cardCornerRadius="10dp"
-                app:cardBackgroundColor="@color/white">
-                <RelativeLayout
-                    android:padding="10dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/textView13"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jobs Accomplished"
-                        android:fontFamily="@font/poppins_medium"
-                        android:textSize="18sp"
-                        android:textColor="@color/txtColor1"/>
-                    <RelativeLayout
-                        android:id="@+id/layoutJobs"
-                        android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/textView13"
-                        android:background="@drawable/rating_box">
-                        <TextView
-                            android:id="@+id/textView14"
-                            android:paddingTop="5dp"
-                            android:paddingLeft="10dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="total"
-                            android:fontFamily="@font/poppins_medium"
-                            android:textSize="14sp"
-                            android:textColor="@color/white"/>
-
-                        <TextView
-                            android:id="@+id/txtJobsTotal"
-                            android:layout_marginTop="8dp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerHorizontal="true"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="00.0"
-                            android:textAlignment="center"
-                            android:gravity="center"
-                            android:textColor="@color/txtColor5"
-                            android:textSize="26sp" />
-                    </RelativeLayout>
-
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-
+                android:layout_height="match_parent"
+                android:paddingHorizontal="5dp"/>
         </LinearLayout>
-    </ScrollView>
+
+
+    </LinearLayout>
+
 </FrameLayout>

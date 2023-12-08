@@ -1,11 +1,14 @@
 package com.example.warroomapp.Activity;
 
-
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -75,17 +78,33 @@ public class SignUpActivity extends AppCompatActivity {
         btnSignUp.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (txtUsername.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
-                    // Display a warning message
-                    txtResponseSignUp.setVisibility(TextView.VISIBLE);
-                    displayMessage(txtResponseSignUp, R.drawable.incorrect_icon, "Username and password are required.", R.drawable.error_message_box, 3000);
-                } else {
-                    SignUp(txtUsername.getText().toString(), txtPassword.getText().toString());
+                hideKeyboard(SignUpActivity.this);
+                if (isConnectedToWiFi()) {
+                    if (txtUsername.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+                        // Display a warning message
+                        txtResponseSignUp.setVisibility(TextView.VISIBLE);
+                        displayMessage(txtResponseSignUp, R.drawable.incorrect_icon, "Username and password are required.", R.drawable.error_message_box, 3000);
+                    } else {
+                        SignUp(txtUsername.getText().toString(), txtPassword.getText().toString());
+                    }
+                }
+                else {
+                    displayMessage(txtResponseSignUp, R.drawable.incorrect_icon, "Wifi isn't connected yet", R.drawable.error_message_box, 4000);
                 }
             }
         }));
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
     public void SignUp(String username ,String password){
         sharedPrefSetting = new SharedPreferencesSetting(getApplicationContext());
 
@@ -205,5 +224,19 @@ public class SignUpActivity extends AppCompatActivity {
         public String getDetail() {
             return detail;
         }
+    }
+
+    private boolean isConnectedToWiFi() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo wifiNetworkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            // Check if WiFi is connected
+            return wifiNetworkInfo != null && wifiNetworkInfo.isConnected();
+        }
+
+        return false;
     }
 }

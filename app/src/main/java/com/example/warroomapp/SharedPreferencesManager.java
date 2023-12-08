@@ -18,6 +18,9 @@ public class SharedPreferencesManager {
     private static final String KEY_IS_USER = "is_user";
     private static final String KEY_IS_STAFF = "is_staff";
     private static final String KEY_IMAGE = "image";
+    private static final String KEY_SKILL_POINT = "skill_point";
+    private static final String KEY_ACTION_PERIOD = "action_period";
+    private static final String KEY_MACHINE_QTY = "machine_qty";
 
     private SharedPreferences preferences;
 
@@ -26,7 +29,8 @@ public class SharedPreferencesManager {
     }
 
     // Methods to save user data
-    public void saveUserData(String tokenId, int userId, String username, String name, String empNo, String description, String remark, boolean isUser, boolean isStaff, String image) {
+    public void saveUserData(String tokenId, int userId, String username, String name, String empNo, String description, String remark,
+                             boolean isUser, boolean isStaff, String image, String skill_point, String action_period, String machine_qty) {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY_TOKEN_ID, tokenId);
         editor.putInt(KEY_USER_ID, userId);
@@ -38,6 +42,9 @@ public class SharedPreferencesManager {
         editor.putBoolean(KEY_IS_USER, isUser);
         editor.putBoolean(KEY_IS_STAFF, isStaff);
         editor.putString(KEY_IMAGE, image);
+        editor.putString(KEY_SKILL_POINT, skill_point);
+        editor.putString(KEY_ACTION_PERIOD, action_period);
+        editor.putString(KEY_MACHINE_QTY, machine_qty);
         editor.apply();
     }
 
@@ -80,5 +87,17 @@ public class SharedPreferencesManager {
 
     public String getImage() {
         return preferences.getString(KEY_IMAGE, "");
+    }
+
+    public String getSkillPoint() {
+        return preferences.getString(KEY_SKILL_POINT, "");
+    }
+
+    public String getActionPeriod() {
+        return preferences.getString(KEY_ACTION_PERIOD, "");
+    }
+
+    public String getMachineQty() {
+        return preferences.getString(KEY_MACHINE_QTY, "");
     }
 }

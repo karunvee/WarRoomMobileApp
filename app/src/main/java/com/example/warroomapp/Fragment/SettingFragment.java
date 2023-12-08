@@ -89,6 +89,9 @@ public class SettingFragment extends Fragment {
                         "",
                         false,
                         false,
+                        "",
+                        "",
+                        "",
                         ""
                 );
 

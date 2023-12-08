@@ -1,10 +1,16 @@
 package com.example.warroomapp.Activity;
+import static com.example.warroomapp.Activity.SignUpActivity.hideKeyboard;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 
 import android.os.Handler;
@@ -17,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.R;
 import com.example.warroomapp.SharedPreferencesManager;
@@ -47,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private ProgressBar progressBarLogin;
     private Dialog url_dialog;
-
+    private LottieAnimationView animationView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,21 +78,35 @@ public class LoginActivity extends AppCompatActivity {
         btnOpenSignUp = findViewById(R.id.btnOpenSignUp);
         progressBarLogin = findViewById(R.id.progressBarLogin);
 
+        animationView = findViewById(R.id.autologin_animation);
+        animationView.setAnimation("satellite_loading_animation.json");
         btnLogin.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                hideKeyboard(LoginActivity.this);
+
                 if(sharedPrefSetting.getApiUrl().equals("") || sharedPrefSetting.getApiUrl() == null){
                     url_dialog.show();
                 }
                 else {
-                    if (txtUsername.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
-                        // Display a warning message
-                        txtResponseLogin.setVisibility(TextView.VISIBLE);
-                        displayMessage(txtResponseLogin, R.drawable.incorrect_icon, "Username and password are required.", R.drawable.error_message_box, 3000);
-                    } else {
-                        LoginFunc(txtUsername.getText().toString(), txtPassword.getText().toString());
-                        displayMessage(txtResponseLogin, R.drawable.correct_icon, "Login success!",  R.drawable.message_box, 2000);
+                    if (isConnectedToWifi()) {
+                        animationView.setVisibility(View.GONE);
+                        animationView.pauseAnimation();
+                        if (txtUsername.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+                            // Display a warning message
+                            txtResponseLogin.setVisibility(TextView.VISIBLE);
+                            displayMessage(txtResponseLogin, R.drawable.incorrect_icon, "Username and password are required.", R.drawable.error_message_box, 3000);
+                        } else {
+                            LoginFunc(txtUsername.getText().toString(), txtPassword.getText().toString());
+                            displayMessage(txtResponseLogin, R.drawable.correct_icon, "Login success!",  R.drawable.message_box, 2000);
+                        }
                     }
+                    else{
+                        animationView.setVisibility(View.VISIBLE);
+                        animationView.playAnimation();
+                        displayMessage(txtResponseLogin, R.drawable.incorrect_icon, "No connection", R.drawable.error_message_box, 4000);
+                    }
+
                 }
             }
         });
@@ -98,6 +119,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        Button btnSetUrl = findViewById(R.id.buttonSettingURL);
+        btnSetUrl.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                url_dialog.show();
+                return false;
+            }
+        });
 
         btnCancelUrl.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +190,10 @@ public class LoginActivity extends AppCompatActivity {
                                 loginResponse.user.getRemark(),
                                 loginResponse.user.isUser(),
                                 loginResponse.user.isStaff(),
-                                loginResponse.user.getImage()
+                                loginResponse.user.getImage(),
+                                loginResponse.user.getSkillPoint(),
+                                loginResponse.user.getActionPeriod(),
+                                loginResponse.user.getMachineQty()
                         );
 
 //                    Toast.makeText(getApplicationContext(), loginResponse.getUser().getName() + "! Login successful", Toast.LENGTH_SHORT).show();
@@ -188,6 +220,8 @@ public class LoginActivity extends AppCompatActivity {
                     txtPassword.setEnabled(true);
                     btnLogin.setEnabled(true);
                     btnOpenSignUp.setEnabled(true);
+
+                    Log.i("LOG_MSG", "animationView GONE" );
                 }
             });
         }
@@ -228,5 +262,26 @@ public class LoginActivity extends AppCompatActivity {
 
         // Set the text
         textView.setText(text);
+    }
+
+
+    public boolean isConnectedToWifi() {
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(getApplicationContext().CONNECTIVITY_SERVICE);
+
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null && networkInfo.isConnected() &&
+                    networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private WifiInfo getWifiInfo() {
+        WifiManager wifiManager = (WifiManager) getSystemService(getApplicationContext().WIFI_SERVICE);
+        return wifiManager.getConnectionInfo();
     }
 }

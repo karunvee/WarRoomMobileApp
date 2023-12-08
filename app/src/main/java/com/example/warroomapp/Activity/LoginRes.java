@@ -43,6 +43,13 @@ class User implements Serializable{
     public boolean isUser;
     @SerializedName("is_staff")
     public boolean isStaff;
+
+    @SerializedName("skill_point")
+    public String skill_point;
+    @SerializedName("action_period")
+    public String action_period;
+    @SerializedName("machine_qty")
+    public String machine_qty;
     public String getImage() {
         return image;
     }
@@ -76,5 +83,15 @@ class User implements Serializable{
 
     public boolean isStaff() {
         return isStaff;
+    }
+
+    public String getSkillPoint() {
+        return skill_point;
+    }
+    public String getActionPeriod() {
+        return action_period;
+    }
+    public String getMachineQty() {
+        return machine_qty;
     }
 }

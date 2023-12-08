@@ -107,6 +107,20 @@
             android:layout_toEndOf="@+id/btnLogin"
             android:visibility="invisible"/>
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/autologin_animation"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_below="@+id/btnLogin"
+            android:layout_marginTop="-110dp"
+            android:layout_marginEnd="22dp"
+            android:layout_toStartOf="@+id/btnLogin"
+            android:elevation="15dp"
+            android:visibility="gone"
+            app:lottie_autoPlay="false"
+            app:lottie_fileName="satellite_loading_animation.json"
+            app:lottie_loop="true" />
+
     </RelativeLayout>
 
     <View
@@ -138,7 +152,7 @@
         android:fontFamily="@font/poppins_regular"
         android:textSize="12sp"
         android:textColor="@color/txtColor2"
-        android:text="Delta Electronic Thailand | Copyright ©2022."
+        android:text="Delta Electronic Thailand | Copyright ©2023."
         app:layout_constraintBottom_toBottomOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -177,5 +191,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/buttonSettingURL"
+        android:layout_width="71dp"
+        android:layout_height="47dp"
+        android:background="@color/transparent"
+        android:text=""
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
