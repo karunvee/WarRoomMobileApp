@@ -1,11 +1,13 @@
 package com.example.warroomapp.Fragment;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.warroomapp.Activity.AuthInterceptor;
 import com.example.warroomapp.Activity.Class.ReasonSolutionRes;
 import com.example.warroomapp.Activity.CommonRes;
@@ -134,6 +137,8 @@ public class MachineActionFragment extends Fragment {
         Button btnSummitJob = view.findViewById(R.id.btnSummitJob);
         TabLayout tabLayout = view.findViewById(R.id.reason_solution_tab);
         ViewPager viewPager = view.findViewById(R.id.reason_solution_pager);
+        LottieAnimationView animationView = view.findViewById(R.id.status_animation_action_page);
+
         PagerAdapter adapter = new PagerAdapter(getChildFragmentManager());
 
         adapter.AddFragment(new ReasonFragment(), "Reason");
@@ -168,9 +173,7 @@ public class MachineActionFragment extends Fragment {
                         );
                         postSummitCodeFunc(sharedPrefManager.getTokenId(), requestBodySummitCode);
 
-                        Intent intentMachineActivity = new Intent(getActivity(), HomeActivity.class);
-                        startActivity(intentMachineActivity);
-                        getActivity().finish();
+                        playSuccessAnimation( animationView, "success_animation.json");
                     }
                 }
                 catch (Exception ex){
@@ -214,6 +217,22 @@ public class MachineActionFragment extends Fragment {
         catch (Exception ex){
             Log.i("LOG_MSG", "postReasonCode: " + ex.getMessage());
         }
+    }
+    private void playSuccessAnimation(LottieAnimationView animaView, String jsonFile){
+        animaView.setAnimation(jsonFile);
+        animaView.setVisibility(View.VISIBLE);
+        animaView.playAnimation();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animaView.setVisibility(View.INVISIBLE);
+                animaView.cancelAnimation();
+
+                Intent intentMachineActivity = new Intent(getActivity(), HomeActivity.class);
+                startActivity(intentMachineActivity);
+                getActivity().finish();
+            }
+        }, 2000);
     }
     public interface PostReasonSolutionCallback {
         void onSuccess(String response);
@@ -265,7 +284,6 @@ public class MachineActionFragment extends Fragment {
             callback.onFailure("Failed to add ReasonCode. Exception: " + e.getMessage());
         }
     }
-
     public interface getReasonSolutionCallback {
         void onSuccess(ReasonSolutionRes response);
 

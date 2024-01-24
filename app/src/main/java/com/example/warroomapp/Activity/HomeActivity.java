@@ -7,6 +7,7 @@ import static com.example.warroomapp.Adaptor.ImageCustom.getRoundedCornerBitmap;
 import com.example.warroomapp.Activity.Class.ActivityUtils;
 import com.example.warroomapp.Adaptor.ViewPagerAdapter;
 import com.example.warroomapp.Fragment.AllJobsFragment;
+import com.example.warroomapp.Fragment.ChatFragment;
 import com.example.warroomapp.GlobalVariable;
 import com.example.warroomapp.NotificationService;
 import com.example.warroomapp.SharedPreferencesMachine;
@@ -95,7 +96,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 
-public class HomeActivity extends AppCompatActivity implements TasksFragment.OnFunctionCallListener {
+public class HomeActivity extends AppCompatActivity implements TasksFragment.OnFunctionCallListener{
     private static GlobalVariable globalVariable = new GlobalVariable();
 
     public class RequestBodyPersonToJob {
@@ -184,6 +185,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
             Log.i("LOG_MSG", "Exception" + e.getMessage());
         }
     }
+
     @Override
     public void onBackPressed() {
         if (viewPager.getCurrentItem() == 0) {
@@ -223,6 +225,7 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
         URI uri;
         try {
             uri = new URI(globalVariable.websocket_url + sharedPrefSetting.getApiUrl() +":8001/ws/job_and_member/");
+            Log.i("LOG_MSG", uri.toString());
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -719,6 +722,5 @@ public class HomeActivity extends AppCompatActivity implements TasksFragment.OnF
                 progressBar.setVisibility(View.GONE);
             }
         }
-
     }
 }

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ProficientCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="5dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginHorizontal="10dp"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="15dp"
+        android:background="@color/bodyColor1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/txtHistory_EmpNo"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="86111786, Karun.wibo"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/btnSummit"
+                android:fontFamily="@font/poppins_regular"/>
+            <TextView
+                android:id="@+id/txtHistoryText01Reason"
+                android:layout_below="@+id/txtHistory_EmpNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Reason : "
+                android:textColor="@color/txtColor1"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
+            <TextView
+                android:id="@+id/txtHistory_Reason"
+                android:layout_below="@+id/txtHistory_EmpNo"
+                android:layout_toEndOf="@+id/txtHistoryText01Reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Reason 001 Reason code code code"
+                android:textColor="@color/txtColor1"
+                android:textStyle="normal"
+                android:fontFamily="@font/poppins_regular"/>
+            <TextView
+                android:id="@+id/txtHistoryText01Solution"
+                android:layout_below="@+id/txtHistory_Reason"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Solution : "
+                android:textColor="@color/txtColor1"
+                android:textStyle="bold"
+                android:fontFamily="@font/poppins_regular"/>
+            <TextView
+                android:id="@+id/txtHistory_Solution"
+                android:layout_toEndOf="@+id/txtHistoryText01Solution"
+                android:layout_below="@+id/txtHistory_Reason"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Auto Test T2 #HIPOT + VIBRATION"
+                android:textColor="@color/txtColor1"
+                android:textStyle="normal"
+                android:fontFamily="@font/poppins_regular"/>
+
+            <TextView
+                android:id="@+id/txtHistory_txt01"
+                android:layout_below="@+id/txtHistory_Solution"
+                android:layout_marginTop="5dp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ended Date: "
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/txtColor3"
+                android:fontFamily="@font/poppins_regular"/>
+            <TextView
+                android:id="@+id/txtHistory_EndedTime"
+                android:layout_below="@+id/txtHistory_Solution"
+                android:layout_toEndOf="@+id/txtHistory_txt01"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15-12-2023 14:50:35"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textSize="10sp"
+                android:textColor="@color/txtColor3"
+                android:fontFamily="@font/poppins_medium"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
